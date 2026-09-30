@@ -1,0 +1,94 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Registered customer or smallholder farmer account",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Customer identifier" },
+        "name": { "type": "string", "description": "Customer full name" },
+        "email": { "type": "string", "description": "Contact email address" },
+        "phone": { "type": "string", "description": "M-Pesa or contact phone number" },
+        "country": { "type": "string", "description": "Country / Region" },
+        "type": { "type": "string", "description": "Account type: Retail Customer, Wholesale Importer, Smallholder Farmer" },
+        "joinedDate": { "type": "string", "description": "Registration date" },
+        "subscribedToEmail": { "type": "boolean", "description": "Newsletter subscription flag" }
+      },
+      "required": ["id", "name", "email", "phone"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Retail shop order placed by a customer",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique Order Reference (e.g. TR-..., TGT-...)" },
+        "customerName": { "type": "string", "description": "Customer full name" },
+        "customerEmail": { "type": "string", "description": "Contact email" },
+        "customerPhone": { "type": "string", "description": "M-Pesa phone number" },
+        "deliveryLocation": { "type": "string", "description": "Delivery address or GPS pickup location" },
+        "transport": { "type": "string", "description": "Transport or delivery method" },
+        "paymentMethod": { "type": "string", "description": "Payment method (MPESA, Card, Cash, etc)" },
+        "paymentRef": { "type": "string", "description": "M-Pesa transaction reference code" },
+        "items": { "type": "array", "description": "Array of purchased retail tea products" },
+        "total": { "type": "number", "description": "Total order amount in KES" },
+        "status": { "type": "string", "description": "Order status: PAID & CONFIRMED, Processing, In Transit, Delivered" },
+        "date": { "type": "string", "description": "Timestamp formatted string" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" },
+        "source": { "type": "string", "description": "Website Checkout" }
+      },
+      "required": ["id", "customerName", "customerPhone", "items", "total", "status"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Official Tegat Factory Retail Shop items",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Product ID" },
+        "name": { "type": "string", "description": "Tea package name" },
+        "category": { "type": "string", "description": "Black Tea or Tea Bags" },
+        "price": { "type": "number", "description": "Retail price in KES" },
+        "stock": { "type": "number", "description": "Inventory count" },
+        "status": { "type": "string", "description": "In Stock, Low Stock, Out of Stock" }
+      },
+      "required": ["id", "name", "category", "price"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Customer and importer product review and testimonial",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Review unique identifier" },
+        "authorName": { "type": "string", "description": "Reviewer display name" },
+        "authorRole": { "type": "string", "description": "Buyer type: Wholesale Importer, Retail Customer, Tea Blender, etc." },
+        "authorLocation": { "type": "string", "description": "City or Country of reviewer" },
+        "countryCode": { "type": "string", "description": "Two letter country code for flag display" },
+        "productGrade": { "type": "string", "description": "Tea grade or retail product reviewed" },
+        "rating": { "type": "number", "description": "Rating score from 1 to 5" },
+        "title": { "type": "string", "description": "Review headline" },
+        "comment": { "type": "string", "description": "Full review text" },
+        "verified": { "type": "boolean", "description": "Verified purchaser badge flag" },
+        "helpfulVotes": { "type": "number", "description": "Helpful upvote counter" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["id", "authorName", "rating", "comment"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of customer profiles and account credentials"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Live collection of customer checkout orders"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Retail inventory stock items"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "Live customer and wholesale importer reviews collection"
+    }
+  }
+}

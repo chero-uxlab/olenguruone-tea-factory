@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  (function(){var o=JSON.parse;JSON.parse=function(t,r){if(t===undefined||t===null||t==='undefined'||t==='null'||t===''||t==='NaN')return null;try{return o(t,r)}catch(e){if(typeof t==='string'&&(t.indexOf('undefined')!==-1||t.indexOf('null')!==-1||t.trim()===''))return null;throw e}};try{if(typeof localStorage!=='undefined'){for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(k){var v=localStorage.getItem(k);if(v==='undefined'||v==='null'||v==='NaN')localStorage.removeItem(k)}}}}catch(e){}})();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toror Tea Factory – Tea Quality Specifications 2025</title>
+<link rel="stylesheet" href="assets/theme.css">
+<link rel="stylesheet" href="assets/accessibility.css">
+<link rel="stylesheet" href="assets/cookies.css">
+<script src="assets/theme.js"></script>
+<script src="assets/accessibility.js" defer></script>
+<script type="module" src="assets/cookies.js"></script>
+<script type="module" src="assets/firebase-db.js"></script>
+
+<style>
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    margin: 0;
+    background: #f4f5f3;
+    color: #2d2d2d;
+    line-height: 1.6;
+}
+
+h1, h2, h3 { font-family: "Segoe UI Semibold", Arial, sans-serif; }
+a { color: #2d6a2d; text-decoration: none; }
+
+.cover {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom, #2d6a2d, #88cc88);
+    color: white;
+    text-align: center;
+}
+
+.cover .logo {
+    width: 120px;
+    height: 120px;
+    background: url('https://via.placeholder.com/150') no-repeat center center;
+    background-size: cover;
+    margin-bottom: 20px;
+    border: 4px solid #fff;
+    border-radius: 50%;
+}
+
+.cover h1 { font-size: 48px; margin: 10px 0; }
+.cover p { font-size: 20px; }
+
+#toc {
+    background: #fff;
+    padding: 20px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 900px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+#toc h2 { text-align: center; margin-bottom: 15px; }
+
+.section {
+    background: white;
+    margin: 25px auto;
+    width: 90%;
+    max-width: 1000px;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+.section h2 {
+    cursor: pointer;
+    position: relative;
+    padding-right: 25px;
+}
+
+.section h2::after {
+    content: "▼";
+    position: absolute;
+    right: 0;
+    font-size: 18px;
+    transition: transform 0.3s;
+}
+
+.section.collapsed h2::after { transform: rotate(-90deg); }
+.section.collapsed .content { display: none; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+th, td { padding: 12px; text-align: left; border: 1px solid #ccc; }
+th { background: #2d6a2d; color: white; }
+tr:nth-child(even) { background: #f0f9f0; }
+tr:hover { background: #e0f2e0; }
+
+.grade-card {
+    background: #eef9f0;
+    padding: 15px;
+    margin: 12px 0;
+    border-left: 6px solid #2d6a2d;
+    border-radius: 6px;
+}
+
+.signature {
+    margin-top: 40px;
+    border-top: 1px solid #2d6a2d;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-style: italic;
+    font-size: 14px;
+}
+
+.signature .line {
+    display: inline-block;
+    width: 48%;
+    border-top: 1px solid #000;
+    margin-top: 20px;
+}
+
+#downloadBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 25px;
+    background: #0b2b0e;
+    color: #f7dc6f;
+    border: 2px solid #0b2b0e;
+    padding: 14px 22px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+    transition: 0.3s;
+    z-index: 999;
+}
+
+#downloadBtn:hover { background: #f7dc6f; color: #0b2b0e; border-color: #f7dc6f; transform: scale(1.06); }
+</style>
+</head>
+
+<body>
+
+<div id="content">
+<section class="cover">
+    <div class="logo"></div>
+    <h1>Toror Tea Factory Co. Ltd</h1>
+    <p>CTC Tea Quality Specifications 2025</p>
+    <p>Document Version: 1.0 | Last Updated: 5 Dec 2025</p>
+</section>
+
+<section id="toc">
+    <h2>Table of Contents</h2>
+    <ol>
+        <li><a href="#section1" class="toc-link">1. Factory & Origin</a></li>
+        <li><a href="#section2" class="toc-link">2. Tea Grades</a></li>
+        <li><a href="#section3" class="toc-link">3. Quality Parameters</a></li>
+        <li><a href="#section4" class="toc-link">4. Brewing Guidelines</a></li>
+        <li><a href="#section5" class="toc-link">5. Compliance & Export Notes</a></li>
+        <li><a href="#section6" class="toc-link">6. Document Verification QR Code</a></li>
+    </ol>
+</section>
+
+<section id="section1" class="section">
+    <h2>1. Factory & Origin</h2>
+    <div class="content">
+        <p><strong>Location:</strong> Kipchimchim, Ainamoi Division, Kericho County, Kenya</p>
+        <p><strong>Processing Method:</strong> CTC (Cut, Tear & Curl)</p>
+        <p><strong>Altitude:</strong> High-altitude Kericho Highlands</p>
+        <p><strong>Annual Production:</strong> ~2.5 million kg made tea</p>
+    </div>
+</section>
+
+<section id="section2" class="section">
+    <h2>2. Tea Grades</h2>
+    <div class="content">
+        <div class="grade-card">
+            <h3>BP1 – Broken Pekoe 1</h3>
+            <p>Largest grain; aromatic, light-bodied liquor; preferred for high-end blends.</p>
+        </div>
+        <div class="grade-card">
+            <h3>PF1 – Pekoe Fannings 1</h3>
+            <p>Medium-sized particles; bright, brisk cup; most common for blends & teabags.</p>
+        </div>
+        <div class="grade-card">
+            <h3>PD – Pekoe Dust</h3>
+            <p>Fine powdery grade; fast extraction; strong-bodied liquor.</p>
+        </div>
+        <div class="grade-card">
+            <h3>D1 – Dust 1</h3>
+            <p>Very fine strong grade; excellent for strong tea blends.</p>
+        </div>
+    </div>
+</section>
+
+<section id="section3" class="section">
+    <h2>3. Quality Parameters</h2>
+    <div class="content">
+        <table>
+            <tr><th>Parameter</th><th>Value / Range</th></tr>
+            <tr><td>Moisture Content</td><td>≤ 7%</td></tr>
+            <tr><td>Total Ash</td><td>4% – 7%</td></tr>
+            <tr><td>Caffeine Content</td><td>2.5% – 3.5%</td></tr>
+            <tr><td>Liquor Color</td><td>Bright coppery (BP1/PF1), deep strong (PD/D1)</td></tr>
+            <tr><td>Packaging</td><td>50kg PP bags + inner PE liner</td></tr>
+            <tr><td>Shelf Life</td><td>24 months (cool, dry conditions)</td></tr>
+        </table>
+    </div>
+</section>
+
+<section id="section4" class="section">
+    <h2>4. Brewing Guidelines</h2>
+    <div class="content">
+        <table>
+            <tr><th>Grade</th><th>Temp</th><th>Steep Time</th><th>Notes</th></tr>
+            <tr><td>BP1</td><td>95–98°C</td><td>3–5 min</td><td>Light & aromatic</td></tr>
+            <tr><td>PF1</td><td>95–98°C</td><td>2.5–4 min</td><td>Strong & brisk</td></tr>
+            <tr><td>PD</td><td>90–95°C</td><td>2–3 min</td><td>Fast extraction</td></tr>
+            <tr><td>D1</td><td>90–95°C</td><td>1.5–2.5 min</td><td>Very strong liquor</td></tr>
+        </table>
+    </div>
+</section>
+
+<section id="section5" class="section">
+    <h2>5. Compliance & Export Notes</h2>
+    <div class="content">
+        <ul>
+            <li>Processed under HACCP and food-safety compliant procedures.</li>
+            <li>Full traceability from farm to export packaging.</li>
+            <li>Suitable for global export markets.</li>
+            <li>Storage: cool, dry & well-ventilated rooms.</li>
+        </ul>
+    </div>
+</section>
+
+<section id="section6" class="section">
+    <h2>6. Document Verification QR Code</h2>
+    <div class="content" id="qrBox">
+        <p>Scan the QR code to verify this document:</p>
+        <div id="qrCanvas"></div><br>
+        <button onclick="generateQR()">Regenerate QR Code</button>
+    </div>
+</section>
+
+<section class="signature">
+    <div>
+        <p>Authorized by:</p>
+        <div class="line"></div>
+        <p>Signature</p>
+    </div>
+    <div>
+        <p>Approved by:</p>
+        <div class="line"></div>
+        <p>Signature</p>
+    </div>
+</section>
+</div>
+
+<button id="downloadBtn" onclick="downloadPDF()">Download PDF</button>
+
+<script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/master/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+// Collapsible sections
+document.querySelectorAll(".section h2").forEach(header => {
+    header.addEventListener("click", () => {
+        header.parentElement.classList.toggle("collapsed");
+    });
+});
+
+// QR code
+function generateQR() {
+    document.getElementById("qrCanvas").innerHTML = "";
+    new QRCode(document.getElementById("qrCanvas"), {
+        text: "https://www.torortea.com/verify?doc=12345",
+        width: 160,
+        height: 160,
+        colorDark: "#2d6a2d",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
+generateQR();
+
+// PDF download with bookmarks
+function downloadPDF() {
+    const element = document.getElementById('content');
+    html2pdf().set({
+        margin: 10,
+        filename: 'Toror_Tea_Specifications_2025.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(element).save();
+}
+
+// TOC smooth scroll
+document.querySelectorAll('.toc-link').forEach(link => {
+    link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        target.scrollIntoView({ behavior: 'smooth' });
+    });
+});
+</script>
+</body>
+</html>

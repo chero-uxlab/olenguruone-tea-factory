@@ -1,0 +1,29 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User profiles & customer registrations
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    // Orders (Customer checkout orders & tracking)
+    match /orders/{orderId} {
+      allow read, write: if true;
+    }
+
+    // Products catalog
+    match /products/{productId} {
+      allow read, write: if true;
+    }
+
+    // Audit logs & activity logs
+    match /audit_logs/{logId} {
+      allow read, write: if true;
+    }
+
+    // Reviews & Feedback
+    match /reviews/{reviewId} {
+      allow read, write: if true;
+    }
+  }
+}

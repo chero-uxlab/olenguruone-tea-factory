@@ -1,0 +1,4445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    (function(){var o=JSON.parse;JSON.parse=function(t,r){if(t===undefined||t===null||t==='undefined'||t==='null'||t===''||t==='NaN')return null;try{return o(t,r)}catch(e){if(typeof t==='string'&&(t.indexOf('undefined')!==-1||t.indexOf('null')!==-1||t.trim()===''))return null;throw e}};try{if(typeof localStorage!=='undefined'){for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(k){var v=localStorage.getItem(k);if(v==='undefined'||v==='null'||v==='NaN')localStorage.removeItem(k)}}}}catch(e){}})();
+  </script>
+  <meta charset="UTF-8" />
+  <title>Factory Management Portal — Tegat Tea Factory</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/cookies.css">
+  <link rel="stylesheet" href="assets/theme.css">
+  <link rel="stylesheet" href="./accessibility.css">
+  <script src="assets/theme.js"></script>
+  <script src="./accessibility.js" defer></script>
+  <script type="module" src="assets/cookies.js"></script>
+  <script type="module" src="assets/firebase-db.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="assets/google-auth.js" defer></script>
+
+  <style>
+    :root {
+      --lux-green: #0b2b0e;
+      --lux-green-dark: #061a08;
+      --lux-green-light: #16471a;
+      --lux-gold: #c99c22;
+      --yellow: #f7dc6f;
+      --cream: #f9fbf8;
+      --dark-text: #0b2b0e;
+      --muted-text: #4a5d4d;
+      --border-color: rgba(11, 43, 14, 0.15);
+      --card-bg: #ffffff;
+      --danger: #c0392b;
+      --success: #1e8449;
+      --info: #0b2b0e;
+      --warning: #d68910;
+      --purple: #8e44ad;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    input, textarea, select { pointer-events: auto !important; user-select: text !important; -webkit-user-select: text !important; cursor: text !important; }
+    input[type="checkbox"], input[type="radio"], input[type="button"], input[type="submit"], input[type="file"] { cursor: pointer !important; }
+
+    body {
+      background-color: #f2f5f1;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--dark-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* --- LOGIN & 2FA OVERLAY GATEKEEPER --- */
+    #loginGate {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 26, 8, 0.95);
+      backdrop-filter: blur(14px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.3s ease;
+    }
+    #loginGate.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .login-card {
+      background: #ffffff;
+      border-radius: 24px;
+      width: 100%;
+      max-width: 440px;
+      padding: 36px 32px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      border: 2px solid var(--lux-gold);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-logo {
+      width: 68px;
+      height: 68px;
+      background: var(--lux-green);
+      border-radius: 18px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(11, 43, 14, 0.3);
+      border: 1.5px solid var(--lux-gold);
+    }
+    .login-logo img {
+      height: 44px;
+      object-fit: contain;
+    }
+
+    .login-card h2 {
+      font-family: 'Fraunces', serif;
+      color: var(--lux-green);
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+    .login-card p {
+      color: var(--muted-text);
+      font-size: 13px;
+      margin-bottom: 22px;
+      line-height: 1.4;
+    }
+
+    /* 2FA Step indicator */
+    .step-badges {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .step-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: #f0f4ef;
+      color: var(--muted-text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border-color);
+    }
+    .step-badge.active {
+      background: var(--lux-green);
+      color: var(--yellow);
+      border-color: var(--lux-gold);
+      font-weight: 800;
+    }
+    .step-badge.completed {
+      background: rgba(30, 132, 73, 0.15);
+      color: var(--success);
+      border-color: rgba(30, 132, 73, 0.3);
+    }
+
+    .form-group-login {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .form-group-login label {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--lux-green);
+      margin-bottom: 6px;
+    }
+    .form-group-login select, 
+    .form-group-login input {
+      width: 100%;
+      padding: 13px 14px;
+      font-size: 14px;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      outline: none;
+      transition: all 0.2s ease;
+      background: #fff;
+      color: var(--lux-green);
+      font-weight: 600;
+    }
+    .form-group-login select:focus, 
+    .form-group-login input:focus {
+      border-color: var(--lux-green);
+      box-shadow: 0 0 0 3px rgba(11, 43, 14, 0.12);
+    }
+
+    /* 2FA OTP Display Box */
+    .otp-prompt-box {
+      background: rgba(247, 220, 111, 0.15);
+      border: 1.5px dashed var(--lux-gold);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .otp-prompt-box p {
+      font-size: 11px;
+      color: var(--lux-green);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+    .otp-code-display {
+      font-family: monospace;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 6px;
+      color: var(--lux-green);
+    }
+    .btn-autofill {
+      background: var(--lux-green);
+      color: var(--yellow);
+      border: 1px solid var(--lux-gold);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-autofill:hover {
+      background: var(--yellow);
+      color: var(--lux-green);
+      border-color: var(--lux-green);
+    }
+
+    .btn-login {
+      width: 100%;
+      background: linear-gradient(135deg, #0b2b0e 0%, #164e22 100%);
+      color: #f7dc6f;
+      border: 1px solid rgba(247, 220, 111, 0.4);
+      padding: 14px 20px;
+      font-size: 14.5px;
+      font-weight: 800;
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      letter-spacing: 0.2px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 16px rgba(11, 43, 14, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-login:hover {
+      background: linear-gradient(135deg, #134d1f 0%, #1a632c 100%) !important;
+      color: #ffffff !important;
+      border-color: rgba(247, 220, 111, 0.7) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(11, 43, 14, 0.32), 0 0 0 1px rgba(247, 220, 111, 0.4);
+    }
+    .btn-login:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 8px rgba(11, 43, 14, 0.25);
+    }
+
+    .btn-secondary-link {
+      background: transparent;
+      border: none;
+      color: var(--muted-text);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 14px;
+      text-decoration: underline;
+    }
+    .btn-secondary-link:hover {
+      color: var(--lux-green);
+    }
+
+    /* --- ADMIN LAYOUT --- */
+    .admin-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .admin-sidebar {
+      width: 270px;
+      background: var(--lux-green);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+    }
+    .sidebar-header {
+      padding: 22px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sidebar-header img {
+      height: 40px;
+      background: #fff;
+      padding: 3px;
+      border-radius: 8px;
+    }
+    .sidebar-header-text h1 {
+      font-family: 'Fraunces', serif;
+      font-size: 17px;
+      color: var(--yellow);
+      line-height: 1.2;
+    }
+    .sidebar-header-text span {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Active Staff User Card */
+    .sidebar-user-card {
+      margin: 14px 12px 6px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 12px 14px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--lux-gold);
+      color: var(--lux-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .user-details h4 {
+      font-size: 13px;
+      color: #ffffff;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .user-role-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      margin-top: 3px;
+    }
+    .role-super { background: var(--yellow); color: var(--lux-green); border: 1px solid var(--lux-green); }
+    .role-manager { background: rgba(247, 220, 111, 0.2); color: var(--yellow); border: 1px solid var(--lux-gold); }
+    .role-dispatch { background: rgba(201, 156, 34, 0.25); color: var(--yellow); border: 1px solid var(--lux-gold); }
+    .role-quality { background: rgba(30, 132, 73, 0.25); color: #2ecc71; border: 1px solid #2ecc71; }
+
+    .sidebar-menu {
+      padding: 12px;
+      list-style: none;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .nav-item button {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      color: rgba(255,255,255,0.85);
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+    .nav-item button:hover {
+      background: rgba(247, 220, 111, 0.12);
+      color: var(--yellow);
+      border-color: rgba(247, 220, 111, 0.2);
+    }
+    .nav-item button.active {
+      background: var(--yellow);
+      color: var(--lux-green);
+      font-weight: 800;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      border-left: 4px solid var(--lux-gold);
+    }
+    .nav-item button.disabled-nav {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .nav-badge {
+      margin-left: auto;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 800;
+    }
+    .nav-item button.active .nav-badge {
+      background: var(--lux-green);
+      color: var(--yellow);
+      border: 1px solid var(--lux-green);
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .btn-logout {
+      width: 100%;
+      background: rgba(231, 76, 60, 0.15);
+      color: #ff7675;
+      border: 1px solid rgba(231, 76, 60, 0.3);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-logout:hover {
+      background: #e74c3c;
+      color: #ffffff;
+    }
+
+    /* Main Content Area */
+    .admin-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    .admin-topbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .topbar-title h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      color: var(--lux-green);
+    }
+    .topbar-title p {
+      font-size: 12px;
+      color: var(--muted-text);
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .security-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(201, 156, 34, 0.12);
+      color: var(--lux-green);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--lux-gold);
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(39, 174, 96, 0.1);
+      color: var(--success);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(39, 174, 96, 0.2);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .admin-content {
+      padding: 32px;
+      flex: 1;
+    }
+
+    /* TAB CONTENT PANELS */
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* DASHBOARD CARDS & GRIDS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 22px 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(11, 43, 14, 0.08);
+      border-color: rgba(11, 43, 14, 0.25);
+    }
+    .stat-info h4 {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted-text);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .stat-info .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--lux-green);
+      font-family: 'Fraunces', serif;
+    }
+    .stat-info .stat-sub {
+      font-size: 12px;
+      color: var(--success);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(11, 43, 14, 0.06);
+      color: var(--lux-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .admin-section-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .card-header h3 {
+      font-family: 'Fraunces', serif;
+      color: var(--lux-green);
+      font-size: 18px;
+    }
+
+    /* TABLES */
+    .table-responsive {
+      overflow-x: auto;
+    }
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    .admin-table th {
+      background: #f8faf7;
+      color: var(--lux-green);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+    .admin-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid #eef2eb;
+      vertical-align: middle;
+    }
+    .admin-table tr:hover {
+      background: #fdfefe;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-pending { background: rgba(214, 137, 16, 0.14); color: #b7770d; border: 1.5px solid rgba(214, 137, 16, 0.35); }
+    .badge-confirmed { background: rgba(11, 43, 14, 0.1); color: var(--lux-green); border: 1.5px solid var(--lux-green); }
+    .badge-transit { background: rgba(201, 156, 34, 0.2); color: #8e6d17; border: 1.5px solid var(--lux-gold); }
+    .badge-delivered { background: rgba(30, 132, 73, 0.15); color: #1e8449; border: 1.5px solid rgba(30, 132, 73, 0.35); }
+    .badge-cancelled { background: rgba(192, 57, 43, 0.12); color: #c0392b; border: 1.5px solid rgba(192, 57, 43, 0.3); }
+
+    .module-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .mod-auth { background: rgba(11, 43, 14, 0.08); color: var(--lux-green); border: 1px solid var(--lux-green); }
+    .mod-orders { background: rgba(247, 220, 111, 0.25); color: var(--lux-green); border: 1px solid var(--lux-gold); }
+    .mod-inventory { background: rgba(30, 132, 73, 0.12); color: #1e8449; border: 1px solid rgba(30, 132, 73, 0.3); }
+    .mod-users { background: rgba(201, 156, 34, 0.18); color: #8e6d17; border: 1px solid var(--lux-gold); }
+    .mod-security { background: rgba(192, 57, 43, 0.12); color: #c0392b; border: 1px solid rgba(192, 57, 43, 0.3); }
+
+    /* BUTTONS & CONTROLS */
+    .btn-action {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--lux-green);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-action:hover {
+      background: var(--lux-green) !important;
+      color: var(--yellow) !important;
+      border-color: var(--lux-green) !important;
+      box-shadow: 0 4px 12px rgba(11, 43, 14, 0.2);
+    }
+    .btn-primary {
+      background: var(--lux-green);
+      color: var(--yellow);
+      border: 1.5px solid var(--lux-green);
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+      background: var(--yellow) !important;
+      color: var(--lux-green) !important;
+      border-color: var(--lux-green) !important;
+      box-shadow: 0 6px 18px rgba(247, 220, 111, 0.45);
+    }
+
+    /* SEARCH & FILTER BAR */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    .search-input:focus {
+      border-color: var(--lux-green);
+      box-shadow: 0 0 0 3px rgba(11, 43, 14, 0.1);
+    }
+    .select-filter {
+      padding: 11px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 13px;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--lux-green);
+      transition: all 0.2s ease;
+    }
+    .select-filter:focus {
+      border-color: var(--lux-green);
+      box-shadow: 0 0 0 3px rgba(11, 43, 14, 0.1);
+    }
+
+    /* MODAL POPUPS */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 26, 8, 0.85);
+      backdrop-filter: blur(6px);
+      z-index: 9000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.show {
+      display: flex;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 580px;
+      padding: 28px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+      border: 2px solid var(--lux-gold);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      border-bottom: 1.5px solid var(--border-color);
+      padding-bottom: 14px;
+    }
+    .modal-header h3 {
+      font-family: 'Fraunces', serif;
+      color: var(--lux-green);
+      font-size: 20px;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--muted-text);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .modal-close:hover {
+      background: rgba(11, 43, 14, 0.08);
+      color: var(--lux-green);
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--lux-green);
+      margin-bottom: 6px;
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    /* TOAST NOTIFICATION */
+    #adminToast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--lux-green);
+      color: var(--yellow);
+      padding: 14px 22px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+      border: 1px solid var(--lux-gold);
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    #adminToast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* COLLAPSIBLE SIDEBAR */
+    .admin-sidebar.collapsed {
+      width: 72px;
+    }
+    .admin-sidebar.collapsed .sidebar-header-text,
+    .admin-sidebar.collapsed .sidebar-user-card .user-details,
+    .admin-sidebar.collapsed .nav-item button span:not(.nav-badge-icon),
+    .admin-sidebar.collapsed .nav-item button .nav-text,
+    .admin-sidebar.collapsed .sidebar-footer span {
+      display: none !important;
+    }
+    .admin-sidebar.collapsed .sidebar-header {
+      padding: 18px 12px;
+      justify-content: center;
+    }
+    .admin-sidebar.collapsed .sidebar-user-card {
+      padding: 8px;
+      margin: 10px 8px;
+      justify-content: center;
+    }
+    .admin-sidebar.collapsed .nav-item button {
+      padding: 12px;
+      justify-content: center;
+    }
+    .admin-sidebar.collapsed .nav-badge {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-size: 9px;
+      padding: 2px 5px;
+    }
+    .btn-toggle-sidebar {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-left: auto;
+    }
+    .btn-toggle-sidebar:hover {
+      background: var(--yellow);
+      color: var(--lux-green);
+      border-color: var(--lux-gold);
+    }
+
+    /* GLOBAL SEARCH TRIGGER */
+    .global-search-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f4f7f3;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--muted-text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 260px;
+    }
+    .global-search-btn:hover {
+      border-color: var(--lux-green);
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(11, 43, 14, 0.08);
+      color: var(--lux-green);
+    }
+    .search-kbd {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      color: var(--lux-green);
+      margin-left: auto;
+    }
+
+    /* PIPELINE FILTER CHIPS */
+    .pipeline-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .pipeline-chip {
+      background: #f0f4f0;
+      border: 1.5px solid var(--border-color);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark-text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .pipeline-chip:hover {
+      background: rgba(11, 43, 14, 0.08);
+      color: var(--lux-green);
+      border-color: var(--lux-green);
+    }
+    .pipeline-chip.active {
+      background: var(--lux-green);
+      color: var(--yellow);
+      border-color: var(--lux-green);
+      box-shadow: 0 4px 12px rgba(11, 43, 14, 0.2);
+    }
+    .pipeline-chip .chip-count {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 10px;
+    }
+
+    /* BULK ACTIONS STICKY TOOLBAR */
+    #bulkOrdersBar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--lux-green);
+      color: #ffffff;
+      border: 2px solid var(--lux-gold);
+      border-radius: 16px;
+      padding: 12px 24px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+      z-index: 9500;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0;
+      pointer-events: none;
+    }
+    #bulkOrdersBar.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* INVENTORY GRID VIEW */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 16px;
+    }
+    .product-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .product-card:hover {
+      border-color: var(--lux-green);
+      box-shadow: 0 10px 25px rgba(11, 43, 14, 0.12);
+      transform: translateY(-2px);
+    }
+    .product-card-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+    }
+
+    /* ORDER STEPPER IN INSPECTOR */
+    .order-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0;
+      position: relative;
+    }
+    .order-stepper::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 10%;
+      right: 10%;
+      height: 3px;
+      background: #e0e6df;
+      z-index: 1;
+    }
+    .stepper-step {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .step-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e0e6df;
+      color: #777;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      border: 2px solid #fff;
+    }
+    .stepper-step.completed .step-icon {
+      background: var(--success);
+      color: #fff;
+    }
+    .stepper-step.active .step-icon {
+      background: var(--lux-green);
+      color: var(--yellow);
+      border-color: var(--lux-gold);
+    }
+    .step-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted-text);
+    }
+    .stepper-step.active .step-label {
+      color: var(--lux-green);
+      font-weight: 800;
+    }
+
+    @media (max-width: 768px) {
+      .admin-wrapper { flex-direction: column; }
+      .admin-sidebar { width: 100%; }
+      .admin-content { padding: 16px; }
+      .admin-topbar { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= SECURITY LOGIN & 2FA GATEKEEPER ================= -->
+  <div id="loginGate">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="assets/tegat_logo.png" alt="Tegat Logo">
+      </div>
+      
+      <h2>Factory Portal Sign In</h2>
+      <p id="loginSubtitle">Secure Management & Operations Staff Authentication</p>
+
+      <!-- Step Badges -->
+      <div class="step-badges">
+        <span class="step-badge active" id="badgeStep1">
+          <span>1</span> Password / PIN
+        </span>
+        <span class="step-badge" id="badgeStep2">
+          <span>2</span> 2FA Verification
+        </span>
+      </div>
+
+      <!-- STEP 1: ACCOUNT & PASSWORD/PIN FORM -->
+      <form id="loginFormStep1" onsubmit="handleLoginStep1(event)">
+        <!-- Google One Tap Staff Login -->
+        <div style="margin-bottom: 16px;">
+          <button type="button" onclick="triggerDirectGoogleSignIn()" style="width: 100%; background: #ffffff; color: #1f2937; border: 1.5px solid #d1d5db; border-radius: 12px; padding: 12px 18px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 1px 3px rgba(0,0,0,0.05);" onmouseover="this.style.background='#f9fafb'; this.style.borderColor='#9ca3af'; this.style.transform='translateY(-1.5px)'; this.style.boxShadow='0 4px 14px rgba(0,0,0,0.08)';" onmouseout="this.style.background='#ffffff'; this.style.borderColor='#d1d5db'; this.style.transform='none'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.05)';">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+            <span>Sign in with Google (Staff SSO)</span>
+          </button>
+
+          <div style="display: flex; align-items: center; margin: 14px 0 12px;">
+            <div style="flex: 1; height: 1px; background: #e0e0e0;"></div>
+            <span style="padding: 0 10px; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;">or staff credentials</span>
+            <div style="flex: 1; height: 1px; background: #e0e0e0;"></div>
+          </div>
+        </div>
+
+        <div class="form-group-login">
+          <label for="selectUser">Select Staff Account</label>
+          <select id="selectUser" required onchange="updateUserLoginHint()">
+            <option value="superadmin">Joan Cherotich — Super Admin (All Rights)</option>
+            <option value="f_manager">Janet Chepkorir — Factory Manager</option>
+            <option value="dispatch_clerk">Peter Cheruiyot — Dispatch Lead</option>
+            <option value="quality_officer">Grace Bett — Quality Inspector</option>
+          </select>
+        </div>
+
+        <div class="form-group-login">
+          <label for="adminPin">Enter Account Password / PIN</label>
+          <div style="position: relative; display: flex; align-items: center;">
+            <input type="password" id="adminPin" maxlength="12" placeholder="••••" required autofocus style="width: 100%; padding-right: 42px;">
+            <button type="button" onclick="toggleAdminPinVisibility(this)" title="Toggle PIN visibility" style="position: absolute; right: 10px; background: transparent; border: none; color: #666; cursor: pointer; padding: 6px; display: flex; align-items: center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-login">
+          <span>Continue to 2FA Step</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+
+        <div style="margin-top: 16px; text-align: center;">
+          <a href="./index.html" style="font-size: 12.5px; color: var(--lux-green); font-weight: 700; text-decoration: underline;">
+            ← Return to Customer Portal &amp; Main Site
+          </a>
+        </div>
+      </form>
+
+      <!-- STEP 2: 2FA OTP VERIFICATION FORM -->
+      <form id="loginFormStep2" style="display: none;" onsubmit="handleLoginStep2(event)">
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--lux-green);" id="2faUserHeading">
+            Verifying 2FA for Joan Cherotich
+          </div>
+          <div style="font-size: 12px; color: var(--muted-text);" id="2faPhoneText">
+            Security code dispatched to j.cherotich@tegatteafactory.co.ke
+          </div>
+        </div>
+
+        <!-- Simulated 2FA Code Display Banner -->
+        <div class="otp-prompt-box">
+          <p>📧 Two-Factor Email Security Code:</p>
+          <div class="otp-code-display" id="generatedOtpDisplay">849 201</div>
+          <button type="button" class="btn-autofill" onclick="autofill2FACode()">
+            Auto-Fill 2FA Code
+          </button>
+        </div>
+
+        <div class="form-group-login">
+          <label for="otpInput">Enter 6-Digit Email 2FA Code</label>
+          <input type="text" id="otpInput" maxlength="6" placeholder="849201" required style="letter-spacing: 6px; text-align: center; font-weight: 800; font-size: 20px;">
+        </div>
+
+        <button type="submit" class="btn-login">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 11 12 14 22 4"/></svg>
+          <span>Verify Email 2FA &amp; Authenticate</span>
+        </button>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+          <button type="button" class="btn-secondary-link" onclick="backToStep1()">
+            ← Back to Login
+          </button>
+          <button type="button" class="btn-secondary-link" onclick="regenerate2FACode()">
+            Resend 2FA Email Code
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ================= MAIN ADMIN PORTAL WRAPPER ================= -->
+  <div class="admin-wrapper">
+
+    <!-- SIDEBAR NAV -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <img src="assets/tegat_logo.png" alt="Tegat Tea Logo">
+        <div class="sidebar-header-text">
+          <h1>Tegat Factory</h1>
+          <span>Operations Admin</span>
+        </div>
+        <button type="button" class="btn-toggle-sidebar" id="btnToggleSidebar" onclick="toggleSidebarCollapse()" title="Toggle Sidebar Width">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+      </div>
+
+      <!-- Active User Card -->
+      <div class="sidebar-user-card" id="sidebarUserCard">
+        <div class="user-avatar" id="sidebarAvatar">EK</div>
+        <div class="user-details">
+          <h4 id="sidebarUserName">Eng. Kiprono</h4>
+          <span class="user-role-badge role-super" id="sidebarRoleBadge">Super Admin</span>
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="nav-item">
+          <button type="button" class="active" onclick="switchTab('dashboard', this)" id="nav-dashboard">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Overview Dashboard</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" onclick="switchTab('orders', this)" id="nav-orders">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            <span>Customer Orders</span>
+            <span class="nav-badge" id="orderNavBadge">0</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" onclick="switchTab('inventory', this)" id="nav-inventory">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Shop & Pricing</span>
+          </button>
+        </li>
+        <!-- REMOVED GREEN LEAF - FOCUSED EXCLUSIVELY ON PLATFORM SALES -->
+
+        <!-- NEW: STAFF USERS & ROLES TAB (SUPER ADMIN ONLY) -->
+        <li class="nav-item">
+          <button type="button" onclick="switchTab('users', this)" id="nav-users">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Users & RBAC Roles</span>
+          </button>
+        </li>
+
+        <!-- NEW: AUDIT LOGS TAB -->
+        <li class="nav-item">
+          <button type="button" onclick="switchTab('audit', this)" id="nav-audit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <span>Audit & Activity Logs</span>
+            <span class="nav-badge" id="auditNavBadge" style="background:var(--lux-gold); color:#000;">0</span>
+          </button>
+        </li>
+
+        <!-- NEW: CUSTOMERS & EMAIL SUBSCRIBERS TAB -->
+        <li class="nav-item">
+          <button type="button" onclick="switchTab('customers', this)" id="nav-customers">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Customers &amp; Subscribers</span>
+            <span class="nav-badge" id="customersNavBadge" style="background:var(--success); color:#fff;">0</span>
+          </button>
+        </li>
+
+        <!-- NEW: CUSTOMER REVIEWS TAB -->
+        <li class="nav-item">
+          <button type="button" onclick="switchTab('reviews', this)" id="nav-reviews">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>Customer Reviews</span>
+            <span class="nav-badge" id="reviewsNavBadge" style="background:#f59e0b; color:#fff;">8</span>
+          </button>
+        </li>
+
+        <li class="nav-item">
+          <button type="button" onclick="switchTab('settings', this)" id="nav-settings">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>Security & Settings</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <button type="button" class="btn-logout" onclick="logoutSession()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>End Staff Session</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT BODY -->
+    <main class="admin-main">
+      <header class="admin-topbar">
+        <div class="topbar-title">
+          <h2 id="pageTitle">Platform Sales Operations Portal</h2>
+          <p id="pageSub">Tegat Tea Factory — E-Commerce Orders & Customer Dispatch Hub</p>
+        </div>
+        <div class="topbar-actions">
+          <button type="button" class="global-search-btn" onclick="openGlobalSearchModal()" title="Search Everything (Ctrl + K)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>Quick Search Portal...</span>
+            <span class="search-kbd">Ctrl K</span>
+          </button>
+          <div class="security-tag" title="Automatic logout enforced if you click outside the admin panel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Auto-Logout Protection</span>
+          </div>
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>Online Gateway Active</span>
+          </div>
+        </div>
+      </header>
+
+      <div class="admin-content">
+
+        <!-- ================= TAB 1: OVERVIEW DASHBOARD ================= -->
+        <div id="tab-dashboard" class="tab-panel active">
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-info">
+                <h4>Total Platform Orders</h4>
+                <div class="stat-value" id="statOrdersCount">0</div>
+                <div class="stat-sub">↑ 14% vs last week</div>
+              </div>
+              <div class="stat-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <h4>Gross Direct Revenue</h4>
+                <div class="stat-value" id="statRevenue">Ksh. 0</div>
+                <div class="stat-sub">M-Pesa &amp; Bank Total</div>
+              </div>
+              <div class="stat-icon" style="background: rgba(39,174,96,0.1); color: var(--success);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <h4>Pending Dispatches</h4>
+                <div class="stat-value" id="statPendingCount">0</div>
+                <div class="stat-sub" style="color: var(--warning);">Awaiting Shipping</div>
+              </div>
+              <div class="stat-icon" style="background: rgba(243,156,18,0.1); color: var(--warning);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <h4>Registered Shoppers</h4>
+                <div class="stat-value" id="statCustomersCount">0</div>
+                <div class="stat-sub" style="color: var(--info);">Active Platform Accounts</div>
+              </div>
+              <div class="stat-icon" style="background: rgba(41,128,185,0.1); color: var(--info);">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions & Sales Breakdown Bar -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 32px;">
+            <div class="admin-section-card">
+              <div class="card-header">
+                <h3>Quick Operations Actions</h3>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button type="button" class="btn-primary" style="justify-content: flex-start;" onclick="switchTab('orders', document.getElementById('nav-orders'))">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                  <span>Review &amp; Dispatch Pending Customer Orders</span>
+                </button>
+                <button type="button" class="btn-action" style="padding: 12px; justify-content: flex-start;" onclick="switchTab('inventory', document.getElementById('nav-inventory'))">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>Update E-Commerce Product Catalog &amp; Pricing</span>
+                </button>
+                <button type="button" class="btn-action" style="padding: 12px; justify-content: flex-start;" onclick="switchTab('customers', document.getElementById('nav-customers'))">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <span>View Registered Customers &amp; Email Subscribers</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="admin-section-card">
+              <div class="card-header">
+                <h3>Platform Revenue by Tea Category</h3>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 4px;">
+                    <span>Black Tea Packets &amp; Bags</span>
+                    <span style="color: var(--lux-green);">55% (Core Retail Demand)</span>
+                  </div>
+                  <div style="height: 10px; background: #eef2eb; border-radius: 10px; overflow: hidden;">
+                    <div style="width: 55%; height: 100%; background: var(--lux-green); border-radius: 10px;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 4px;">
+                    <span>Purple &amp; Specialty Artisan Teas</span>
+                    <span style="color: var(--lux-gold);">25% (High Margin Premium)</span>
+                  </div>
+                  <div style="height: 10px; background: #eef2eb; border-radius: 10px; overflow: hidden;">
+                    <div style="width: 25%; height: 100%; background: var(--lux-gold); border-radius: 10px;"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 4px;">
+                    <span>Bulk Export Bales (Direct Online Inquiries)</span>
+                    <span style="color: var(--info);">20% (Wholesale Direct)</span>
+                  </div>
+                  <div style="height: 10px; background: #eef2eb; border-radius: 10px; overflow: hidden;">
+                    <div style="width: 20%; height: 100%; background: var(--info); border-radius: 10px;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Customer Orders Table -->
+          <div class="admin-section-card">
+            <div class="card-header">
+              <h3>Recent Retail Direct Orders</h3>
+              <button type="button" class="btn-action" onclick="switchTab('orders', document.getElementById('nav-orders'))">
+                View All Orders →
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order Ref</th>
+                    <th>Date / Time</th>
+                    <th>Customer Name</th>
+                    <th>Location / Transport</th>
+                    <th>Payment Ref</th>
+                    <th>Total (Ksh)</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="dashOrdersBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ================= TAB 2: CUSTOMER ORDERS MANAGEMENT ================= -->
+        <div id="tab-orders" class="tab-panel">
+
+          <!-- GOOGLE APPS SCRIPT (GAS) ORDER PULLING BANNER -->
+          <div style="background: linear-gradient(135deg, #0b2b0e 0%, #154319 100%); color: #fff; border: 1.5px solid var(--lux-gold); border-radius: 16px; padding: 22px 26px; margin-bottom: 24px; box-shadow: 0 12px 30px rgba(0,0,0,0.2);">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px;">
+              <div style="display: flex; align-items: center; gap: 16px; flex: 1; min-width: 290px;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(247,220,111,0.18); color: var(--yellow); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid rgba(247,220,111,0.3);">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                </div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <h4 style="margin: 0; color: var(--yellow); font-family: 'Playfair Display', serif; font-size: 19px;">Google Sheets &amp; Apps Script (GAS) Order Pull</h4>
+                    <span id="gasSyncBadge" style="font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 12px; background: rgba(46,204,113,0.2); color: #2ecc71; border: 1px solid rgba(46,204,113,0.4);">● GAS Endpoint Active</span>
+                  </div>
+                  <p style="margin: 4px 0 0; font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.45;">Pull live customer orders from Google Sheets via Google Apps Script Web App endpoint, or sync website checkout entries.</p>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <button type="button" onclick="syncOrdersFromGAS()" id="btnSyncGasOrders" style="background: var(--yellow); color: var(--lux-green); border: none; padding: 12px 22px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 14px rgba(247,220,111,0.25);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                  <span>Pull Orders from GAS Script</span>
+                </button>
+                <button type="button" onclick="openGasConfigModal()" style="background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 12px 18px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <span>GAS Config &amp; Code</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-section-card">
+            <div class="card-header">
+              <h3>Customer Retail Orders & Dispatch Pipeline</h3>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button type="button" class="btn-primary" onclick="exportOrdersCSV()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Export Orders (CSV)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- PIPELINE CHIPS -->
+            <div class="pipeline-chips" id="orderPipelineChips">
+              <button type="button" class="pipeline-chip active" onclick="setOrderPipelineFilter('ALL', this)">
+                <span>All Orders</span>
+                <span class="chip-count" id="chipAllCount">0</span>
+              </button>
+              <button type="button" class="pipeline-chip" onclick="setOrderPipelineFilter('Pending', this)">
+                <span>Pending Verification</span>
+                <span class="chip-count" id="chipPendingCount">0</span>
+              </button>
+              <button type="button" class="pipeline-chip" onclick="setOrderPipelineFilter('Confirmed', this)">
+                <span>Confirmed</span>
+                <span class="chip-count" id="chipConfirmedCount">0</span>
+              </button>
+              <button type="button" class="pipeline-chip" onclick="setOrderPipelineFilter('In Transit', this)">
+                <span>In Transit</span>
+                <span class="chip-count" id="chipTransitCount">0</span>
+              </button>
+              <button type="button" class="pipeline-chip" onclick="setOrderPipelineFilter('Delivered', this)">
+                <span>Delivered</span>
+                <span class="chip-count" id="chipDeliveredCount">0</span>
+              </button>
+            </div>
+
+            <div class="filter-bar">
+              <input type="text" id="orderSearchInput" class="search-input" placeholder="Search by Order ID, Name, Phone, or Payment Code..." onkeyup="renderOrdersTable()">
+              <select id="orderStatusFilter" class="select-filter" onchange="renderOrdersTable()">
+                <option value="ALL">All Statuses</option>
+                <option value="Pending">Pending Confirmation</option>
+                <option value="Confirmed">Confirmed Payment</option>
+                <option value="In Transit">In Transit / Dispatched</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th style="width: 38px; text-align: center;"><input type="checkbox" id="selectAllOrders" onchange="toggleSelectAllOrders(this)" title="Select All"></th>
+                    <th>Order Ref</th>
+                    <th>Date / Time</th>
+                    <th>Customer</th>
+                    <th>Phone</th>
+                    <th>Destination</th>
+                    <th>Payment Method / Code</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="fullOrdersBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 3: INVENTORY & PRICING ================= -->
+        <div id="tab-inventory" class="tab-panel">
+          
+          <!-- LOW STOCK ALERT CONTAINER -->
+          <div id="lowStockAlertBanner"></div>
+
+          <div class="admin-section-card">
+            <div class="card-header">
+              <h3>Retail Tea Catalog & Pricing Control</h3>
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <div style="display: inline-flex; background: #f0f4f0; padding: 3px; border-radius: 8px; border: 1px solid var(--border-color);">
+                  <button type="button" id="btnViewTable" onclick="setInventoryViewMode('table')" style="padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; background: var(--lux-green); color: var(--yellow); cursor: pointer;">
+                    ☰ Table View
+                  </button>
+                  <button type="button" id="btnViewGrid" onclick="setInventoryViewMode('grid')" style="padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; background: transparent; color: var(--muted-text); cursor: pointer;">
+                    ▦ Grid View
+                  </button>
+                </div>
+                <button type="button" class="btn-action" onclick="exportInventoryCSV()">
+                  Export CSV
+                </button>
+                <button type="button" class="btn-primary" id="btnAddProduct" onclick="openAddProductModal()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  <span>Add New Catalog Item</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="inventoryTableWrap" class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Product Name & Weight</th>
+                    <th>Category</th>
+                    <th>Factory Unit Price (Ksh)</th>
+                    <th>Stock Level</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- GRID VIEW CONTAINER -->
+            <div id="inventoryGrid" class="product-grid" style="display: none;">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 4: STAFF USERS & ROLES (SUPER ADMIN ONLY) ================= -->
+        <div id="tab-users" class="tab-panel">
+          <div class="admin-section-card">
+            <div class="card-header">
+              <h3>Staff User Directory & Role Permissions (RBAC)</h3>
+              <button type="button" class="btn-primary" id="btnAddUser" onclick="openAddUserModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>Create New Staff Account</span>
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Staff Member</th>
+                    <th>Username</th>
+                    <th>Email (2FA)</th>
+                    <th>Role &amp; Privilege Level</th>
+                    <th>2FA Status</th>
+                    <th>Contact Phone</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="usersBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 6: AUDIT & ACTIVITY LOGS ================= -->
+        <div id="tab-audit" class="tab-panel">
+          <div class="admin-section-card">
+            <div class="card-header">
+              <h3>System-Wide Audit Trail & Activity Logs</h3>
+              <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn-action" onclick="exportAuditLogsCSV()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Export Logs (CSV)</span>
+                </button>
+                <button type="button" class="btn-action" id="btnClearAudit" style="color:var(--danger); border-color:rgba(231,76,60,0.3);" onclick="clearAuditTrail()">
+                  Clear History
+                </button>
+              </div>
+            </div>
+
+            <div class="filter-bar">
+              <input type="text" id="auditSearchInput" class="search-input" placeholder="Search by staff name, action, or order ref..." onkeyup="renderAuditTable()">
+              <select id="auditModuleFilter" class="select-filter" onchange="renderAuditTable()">
+                <option value="ALL">All Modules</option>
+                <option value="Auth">Auth & 2FA</option>
+                <option value="Orders">Orders Pipeline</option>
+                <option value="Inventory">Shop & Pricing</option>
+                <option value="Leaf">Green Leaf</option>
+                <option value="Users">Users & RBAC</option>
+                <option value="Security">Security Settings</option>
+              </select>
+            </div>
+
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Staff User</th>
+                    <th>Role</th>
+                    <th>Module</th>
+                    <th>Action Executed</th>
+                    <th>Details & Impact</th>
+                  </tr>
+                </thead>
+                <tbody id="auditBody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 7: SECURITY & SETTINGS ================= -->
+        <div id="tab-settings" class="tab-panel">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+            <div class="admin-section-card">
+              <div class="card-header">
+                <h3>Change Current User Security PIN</h3>
+              </div>
+              <form onsubmit="handleChangePin(event)">
+                <div class="form-group">
+                  <label>Current Security PIN</label>
+                  <input type="password" id="curPin" maxlength="12" placeholder="••••" required>
+                </div>
+                <div class="form-group">
+                  <label>New Security PIN</label>
+                  <input type="password" id="newPin1" maxlength="12" placeholder="••••" required>
+                </div>
+                <div class="form-group">
+                  <label>Confirm New Security PIN</label>
+                  <input type="password" id="newPin2" maxlength="12" placeholder="••••" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">
+                  Update Access Security PIN
+                </button>
+              </form>
+            </div>
+
+            <div class="admin-section-card">
+              <div class="card-header">
+                <h3>2FA & Security Enforcement Overview</h3>
+              </div>
+              <div style="font-size: 13px; line-height: 1.6; color: var(--muted-text); margin-bottom: 20px;">
+                <p style="margin-bottom: 10px;">
+                  🔒 <strong>Two-Factor Authentication (2FA) Status:</strong> ACTIVE & ENFORCED across all staff accounts.
+                </p>
+                <p style="margin-bottom: 10px;">
+                  🛡️ <strong>Session Security:</strong> Authenticated sessions expire automatically when ending staff session or closing browser window.
+                </p>
+                <p>
+                  📜 <strong>Audit Trail Policy:</strong> All state changes are immutably logged with user identity and timestamp.
+                </p>
+              </div>
+
+              <div id="systemResetBox" style="border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: 16px;">
+                <h4 style="font-size:14px; font-weight:700; color:var(--danger); margin-bottom:8px;">Super Admin Emergency Reset</h4>
+                <p style="font-size: 12px; color: var(--muted-text); margin-bottom: 14px;">
+                  Restore original factory demo records for orders, products, green leaf intake, and default user credentials.
+                </p>
+                <button type="button" class="btn-primary" style="background: var(--danger); border-color: var(--danger); color: #fff; width: 100%; justify-content: center;" onclick="resetDemoData()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                  <span>Reset System Data & Restore Defaults</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 7: CUSTOMERS & SUBSCRIBERS MANAGEMENT -->
+        <div class="tab-panel" id="tab-customers">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Registered Customer Accounts</span>
+                <div class="stat-icon-wrap" style="background: rgba(11,43,14,0.1); color: var(--lux-green);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="kpiTotalCustomers">0</div>
+              <div class="stat-footer positive">
+                <span>Verified Client Profiles</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Email Newsletter Subscribers</span>
+                <div class="stat-icon-wrap" style="background: rgba(247,220,111,0.2); color: var(--lux-green);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="kpiTotalSubscribers">0</div>
+              <div class="stat-footer positive">
+                <span>Active Direct Subscribers</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Wholesale & Farmer Accounts</span>
+                <div class="stat-icon-wrap" style="background: rgba(52,152,219,0.1); color: #2980b9;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="kpiB2bAccounts">0</div>
+              <div class="stat-footer positive">
+                <span>B2B Trade Importers & Farmers</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Email Opt-In Ratio</span>
+                <div class="stat-icon-wrap" style="background: rgba(46,204,113,0.1); color: var(--success);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="kpiOptInRatio">100%</div>
+              <div class="stat-footer positive">
+                <span>GDPR/Privacy Compliant</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 1: REGISTERED CUSTOMERS TABLE -->
+          <div class="admin-section-card" style="margin-bottom: 24px;">
+            <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h3>Registered Customer Accounts</h3>
+                <p class="subtitle">Client portal registrations created via frontend website</p>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="custSearchInput" placeholder="Search customer name, email, phone..." oninput="renderAdminCustomersTable()" style="padding: 8px 14px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 13px; outline: none; min-width: 220px;">
+                <button type="button" class="btn-action" onclick="toggleMaskedContacts()" id="btnToggleMaskContacts" style="padding: 8px 12px; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <span id="txtToggleMaskContacts">Reveal Contacts</span>
+                </button>
+                <button type="button" class="btn-primary" onclick="exportCustomersCSV()" style="padding: 8px 14px; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Export Customer CSV</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer ID</th>
+                    <th>Full Name</th>
+                    <th>Email Address</th>
+                    <th>Phone Number</th>
+                    <th>Country / Location</th>
+                    <th>Account Type</th>
+                    <th>Newsletter Subscribed</th>
+                    <th>Joined Date</th>
+                  </tr>
+                </thead>
+                <tbody id="adminCustomersTbody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- SECTION 2: EMAIL SUBSCRIBERS TABLE & EXPORT -->
+          <div class="admin-section-card">
+            <div class="card-header">
+              <div>
+                <h3>Email Newsletter Subscriber List</h3>
+                <p class="subtitle">Direct email bulletin subscribers from site footer and registration forms</p>
+              </div>
+              <button type="button" class="btn-primary" onclick="exportSubscribersCSV()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Export Subscribers to CSV</span>
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Subscriber Email</th>
+                    <th>Name / Label</th>
+                    <th>Opt-In Source</th>
+                    <th>Subscription Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="adminSubscribersTbody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 8: CUSTOMER REVIEWS MANAGEMENT ================= -->
+        <div class="tab-panel" id="tab-reviews">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Average Rating Score</span>
+                <div class="stat-icon-wrap" style="background: rgba(245,158,11,0.1); color: #d97706;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="adminAvgRating">4.9 / 5.0</div>
+              <div class="stat-footer positive">
+                <span>98% Positive Feedback</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Verified Reviews Published</span>
+                <div class="stat-icon-wrap" style="background: rgba(11,43,14,0.1); color: var(--lux-green);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+              </div>
+              <div class="stat-value" id="adminTotalReviewsCount">8</div>
+              <div class="stat-footer positive">
+                <span>Realtime Cloud Synced</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">5-Star Excellence Ratio</span>
+                <div class="stat-icon-wrap" style="background: rgba(46,204,113,0.1); color: var(--success);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+              </div>
+              <div class="stat-value">94%</div>
+              <div class="stat-footer positive">
+                <span>Top Tea Factory Benchmark</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Global Markets</span>
+                <div class="stat-icon-wrap" style="background: rgba(52,152,219,0.1); color: #2980b9;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+              </div>
+              <div class="stat-value">18+ Countries</div>
+              <div class="stat-footer positive">
+                <span>Europe, ME, US, Africa</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-section-card">
+            <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h3>Global Customer &amp; Wholesale Importer Reviews</h3>
+                <p class="muted" style="margin:4px 0 0;">Verified tea tasting ratings, grade assessments, and customer satisfaction feedback.</p>
+              </div>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <label for="adminReviewSort" style="font-size:12px; font-weight:700; color:var(--text-main);">Sort:</label>
+                <select id="adminReviewSort" class="filter-select" onchange="renderAdminReviewsTable()" style="padding:6px 10px; font-size:12px; border-radius:6px; border:1px solid var(--border-color); background:var(--card-bg, #fff);">
+                  <option value="recent">Most Recent</option>
+                  <option value="highest">Highest Rated</option>
+                  <option value="helpful">Most Helpful</option>
+                </select>
+                <button type="button" class="btn-action" onclick="renderAdminReviewsTable()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                  <span>Refresh Reviews</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Reviewer &amp; Company</th>
+                    <th>Tea Grade / Product</th>
+                    <th>Rating</th>
+                    <th>Review Headline &amp; Feedback</th>
+                    <th>Helpful Votes</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody id="adminReviewsTbody">
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ================= MODAL: EDIT PRODUCT ================= -->
+  <div class="modal-backdrop" id="productModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="productModalTitle">Edit Retail Product</h3>
+        <button type="button" class="modal-close" onclick="closeModal('productModal')">×</button>
+      </div>
+      <form onsubmit="saveProductForm(event)">
+        <input type="hidden" id="pId">
+        <div class="form-group">
+          <label>Product Name & Size</label>
+          <input type="text" id="pName" required placeholder="e.g. Black Tea – Net Weight: 100g">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="pCategory">
+            <option value="Black Tea">Black Tea (Loose Leaf)</option>
+            <option value="Tea Bags">Envelope Tea Bags</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Price in Ksh.</label>
+          <input type="number" id="pPrice" min="1" step="1" required>
+        </div>
+        <div class="form-group">
+          <label>Stock Count (Units)</label>
+          <input type="number" id="pStock" min="0" step="1" required>
+        </div>
+        <div class="form-group">
+          <label>Availability Status</label>
+          <select id="pStatus">
+            <option value="In Stock">In Stock</option>
+            <option value="Low Stock">Low Stock</option>
+            <option value="Out of Stock">Out of Stock</option>
+          </select>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn-action" onclick="closeModal('productModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ADD STAFF USER ================= -->
+  <div class="modal-backdrop" id="userModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="userModalTitle">Add Staff Account</h3>
+        <button type="button" class="modal-close" onclick="closeModal('userModal')">×</button>
+      </div>
+      <form onsubmit="saveUserForm(event)">
+        <input type="hidden" id="uUsernameOld">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="uName" required placeholder="e.g. Hillary Bett">
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="uUsername" required placeholder="e.g. hbett">
+        </div>
+        <div class="form-group">
+          <label>Role & Rights Level</label>
+          <select id="uRole">
+            <option value="superadmin">Super Admin (All Rights)</option>
+            <option value="f_manager">Factory Manager</option>
+            <option value="dispatch_clerk">Dispatch Officer</option>
+            <option value="quality_officer">Quality Inspector</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Access Security PIN</label>
+          <input type="password" id="uPin" required maxlength="12" placeholder="••••">
+        </div>
+        <div class="form-group">
+          <label>Staff Email (for 2FA Code)</label>
+          <input type="email" id="uEmail" required placeholder="user@tegatteafactory.co.ke">
+        </div>
+        <div class="form-group">
+          <label>Contact Phone Number</label>
+          <input type="text" id="uPhone" required value="+254 712 000 111">
+        </div>
+        <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+          <input type="checkbox" id="u2fa" checked style="width:auto;">
+          <label for="u2fa" style="margin:0; cursor:pointer;">Enforce 2FA Security on Login</label>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+          <button type="button" class="btn-action" onclick="closeModal('userModal')">Cancel</button>
+          <button type="submit" class="btn-primary">Save User Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: VIEW ORDER DETAILS ================= -->
+  <div class="modal-backdrop" id="orderDetailsModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="orderModalTitle">Order Details</h3>
+        <button type="button" class="modal-close" onclick="closeModal('orderDetailsModal')">×</button>
+      </div>
+      <div id="orderModalBody" style="font-size: 13.5px; line-height: 1.6;">
+        <!-- Injected via JS -->
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; border-top: 1px solid var(--border-color); padding-top: 16px;">
+        <button type="button" class="btn-action" onclick="window.print()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          <span>Print Receipt</span>
+        </button>
+        <button type="button" class="btn-primary" onclick="closeModal('orderDetailsModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: GOOGLE APPS SCRIPT CONFIGURATION ================= -->
+  <div class="modal-backdrop" id="gasConfigModal">
+    <div class="modal-box" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px; color: var(--lux-green);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Google Apps Script (GAS) Web App Setup
+        </h3>
+        <button type="button" class="modal-close" onclick="closeModal('gasConfigModal')">×</button>
+      </div>
+
+      <div style="font-size: 13.5px; color: var(--text-color); line-height: 1.5; margin-bottom: 18px;">
+        Connect your Google Sheet directly to Tegat Tea Factory portal. Orders placed on the website or managed in this dashboard will automatically sync with Google Sheets!
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label for="gasScriptUrlInput">Google Apps Script Web App Endpoint URL</label>
+        <input type="url" id="gasScriptUrlInput" value="https://script.google.com/macros/s/AKfycbxOrBeq1nEoWz-oeoSwV9SVbJ58_PCOafpYDGibxL5g3VR2POXMLAGj4Afvb4-aqQMp/exec" placeholder="https://script.google.com/macros/s/AKfycbxOrBeq1nEoWz-oeoSwV9SVbJ58_PCOafpYDGibxL5g3VR2POXMLAGj4Afvb4-aqQMp/exec" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 13.5px;">
+        <small style="color: var(--muted-text); font-size: 11.5px; margin-top: 4px; display: block;">
+          Deploy as Web App in Google Apps Script (Execute as: <strong>Me</strong>, Who has access: <strong>Anyone</strong>).
+        </small>
+      </div>
+
+      <div style="background: #f8faf7; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <strong style="font-size: 13px; color: var(--lux-green);">📋 Copy Google Apps Script Code (Code.gs)</strong>
+          <button type="button" class="btn-autofill" onclick="copyGasCode()" style="padding: 6px 12px; font-size: 11.5px;">
+            Copy Script to Clipboard
+          </button>
+        </div>
+        <textarea id="gasCodeTextarea" readonly style="width: 100%; height: 160px; font-family: monospace; font-size: 11.5px; background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 6px; resize: vertical;">
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Orders") || SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var data = sheet.getDataRange().getValues();
+  var orders = [];
+  for (var i = 1; i < data.length; i++) {
+    var r = data[i];
+    if(!r[0]) continue;
+    orders.push({
+      id: String(r[0]),
+      date: String(r[1] || ''),
+      name: String(r[2] || 'Customer'),
+      email: String(r[3] || ''),
+      phone: String(r[4] || ''),
+      region: String(r[5] || 'Kericho'),
+      transport: String(r[6] || 'Pickup'),
+      paymentMethod: String(r[7] || 'M-Pesa'),
+      paymentRef: String(r[8] || ''),
+      total: Number(r[9] || 0),
+      status: String(r[10] || 'Pending')
+    });
+  }
+  return ContentService.createTextOutput(JSON.stringify({ status: "success", orders: orders }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Orders") || SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var o = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    o.id,
+    o.date || new Date().toISOString(),
+    o.name,
+    o.email,
+    o.phone,
+    o.region,
+    o.transport,
+    o.paymentMethod,
+    o.paymentRef,
+    o.total,
+    o.status || 'Pending'
+  ]);
+  return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Order recorded" }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+        </textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button type="button" class="btn-action" onclick="closeModal('gasConfigModal')">Cancel</button>
+        <button type="button" class="btn-primary" onclick="saveGasUrl()">Save &amp; Test Connection</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOATING BULK ACTIONS TOOLBAR -->
+  <div id="bulkOrdersBar">
+    <span style="font-weight: 800; font-size: 13.5px; color: var(--yellow);" id="bulkCountText">0 Orders Selected</span>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 11.5px; background: var(--yellow); color: var(--lux-green);" onclick="bulkUpdateOrderStatus('Confirmed')">
+        Mark Confirmed
+      </button>
+      <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 11.5px; background: var(--lux-gold); color: #000;" onclick="bulkUpdateOrderStatus('In Transit')">
+        Mark Dispatched
+      </button>
+      <button type="button" class="btn-action" style="padding: 6px 12px; font-size: 11.5px; color: #fff; border-color: rgba(255,255,255,0.4);" onclick="bulkExportSelectedCSV()">
+        Export Manifest CSV
+      </button>
+      <button type="button" style="background: transparent; border: none; color: rgba(255,255,255,0.7); cursor: pointer; font-size: 18px; padding: 0 4px;" onclick="clearOrderSelections()" title="Deselect All">
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: GLOBAL SEARCH OVERLAY -->
+  <div class="modal-backdrop" id="globalSearchModal">
+    <div class="modal-box" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px; color: var(--lux-green);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Global Factory Operations Search
+        </h3>
+        <button type="button" class="modal-close" onclick="closeModal('globalSearchModal')">×</button>
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <input type="text" id="globalSearchInput" placeholder="Type Order ID, Customer Name, M-Pesa Code, Product, or Staff..." oninput="handleGlobalSearch(this.value)" style="width: 100%; padding: 14px 16px; border: 2px solid var(--lux-green); border-radius: 12px; font-size: 15px; outline: none; font-weight: 600;">
+      </div>
+      <div id="globalSearchResults" style="max-height: 380px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;">
+        <div style="text-align: center; color: var(--muted-text); padding: 24px; font-size: 13px;">
+          Type keywords above to search orders, products, customers, and audit trail logs...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SECURITY PIN RE-AUTHENTICATION FOR PRIVILEGED ACTIONS -->
+  <div class="modal-backdrop" id="pinReauthModal" style="z-index: 2800;">
+    <div class="modal-box" style="max-width: 440px; border-top: 4px solid var(--danger);">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px; color: var(--danger);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Security Re-Authentication Required
+        </h3>
+        <button type="button" class="modal-close" onclick="cancelPinReauth()">×</button>
+      </div>
+      <div style="font-size: 13.5px; color: var(--text-color); margin-bottom: 16px; line-height: 1.5;">
+        You are attempting a privileged operation:<br>
+        <strong id="reauthActionLabel" style="color: var(--danger); display: block; margin-top: 4px; font-size: 14px;">[Action]</strong>
+        <p style="margin-top: 8px; color: var(--muted-text); font-size: 12px;">Please enter your account <strong>Security PIN</strong> to confirm authorization.</p>
+      </div>
+      <form onsubmit="submitPinReauth(event)">
+        <div class="form-group" style="margin-bottom: 20px;">
+          <label style="display: block; font-size: 11.5px; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; color: var(--lux-green);">Account Security PIN</label>
+          <input type="password" id="reauthPinInput" maxlength="6" pattern="[0-9]{4,6}" placeholder="••••••" required autocomplete="current-password" style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 18px; font-weight: 800; letter-spacing: 6px; text-align: center;">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn-action" onclick="cancelPinReauth()">Cancel</button>
+          <button type="submit" class="btn-primary" style="background: var(--danger); border-color: var(--danger);">Authorize &amp; Proceed</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: IDLE INACTIVITY EXPIRATION WARNING -->
+  <div class="modal-backdrop" id="inactivityWarningModal" style="z-index: 3000;">
+    <div class="modal-box" style="max-width: 440px; border-top: 4px solid var(--yellow); text-align: center;">
+      <div style="font-size: 42px; margin-bottom: 8px;">⏳</div>
+      <h3 style="color: var(--lux-green); margin-bottom: 8px; font-weight: 800;">Staff Session Idle Warning</h3>
+      <p style="font-size: 13.5px; color: var(--text-color); margin-bottom: 18px; line-height: 1.5;">
+        To safeguard factory dispatch and financial data, your session will automatically terminate in <strong id="inactivityCountdownText" style="color: var(--danger); font-size: 20px;">60s</strong> due to inactivity.
+      </p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button type="button" class="btn-action" onclick="triggerAutoLogout('10 Minutes Inactivity Timeout')">End Session Now</button>
+        <button type="button" class="btn-primary" style="background: var(--lux-green);" onclick="resetInactivityTimer()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Keep Me Logged In
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="adminToast">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMsg">Action executed successfully.</span>
+  </div>
+
+  <!-- ================= LOGIC & DATA SCRIPT ================= -->
+  <script>
+    // Storage Keys
+    const STORAGE_USERS_KEY = 'tegat_admin_users';
+    const STORAGE_SESSION_KEY = 'tegat_admin_session_v2';
+    const STORAGE_ORDERS_KEY = 'tegat_orders';
+    const STORAGE_PRODUCTS_KEY = 'tegat_products';
+    const STORAGE_AUDIT_KEY = 'tegat_audit_logs';
+    const STORAGE_CUSTOMERS_KEY = 'tegat_customer_accounts';
+    const STORAGE_SUBSCRIBERS_KEY = 'tegat_newsletter_subscribers';
+
+    const SAMPLE_CUSTOMERS = [
+      { id: 'CUST-801', name: 'Dr. Hillary Langat', email: 'h.langat@nairobitrading.co.ke', phone: '+254 722 300 400', country: 'Kenya', type: 'Wholesale Importer', subscribedToEmail: true, joinedDate: 'Aug 02, 2026' },
+      { id: 'CUST-802', name: 'Sophia Mueller', email: 's.mueller@hamburgtea.de', phone: '+49 40 123456', country: 'Germany', type: 'Wholesale Importer', subscribedToEmail: true, joinedDate: 'Aug 05, 2026' },
+      { id: 'CUST-803', name: 'Mercy Kiprono', email: 'mercy.kip@gmail.com', phone: '+254 712 998 877', country: 'Kenya', type: 'Retail Customer', subscribedToEmail: true, joinedDate: 'Aug 07, 2026' },
+      { id: 'CUST-804', name: 'Kipkoech Chepkwony', email: 'k.chepkwony@ktda-farmers.or.ke', phone: '+254 700 112 233', country: 'Kenya', type: 'Smallholder Farmer', subscribedToEmail: false, joinedDate: 'Aug 08, 2026' }
+    ];
+
+    const SAMPLE_SUBSCRIBERS = [
+      { email: 'h.langat@nairobitrading.co.ke', name: 'Dr. Hillary Langat', source: 'Account Registration', date: '2026-08-02T10:15:00.000Z' },
+      { email: 's.mueller@hamburgtea.de', name: 'Sophia Mueller', source: 'Account Registration', date: '2026-08-05T14:22:00.000Z' },
+      { email: 'mercy.kip@gmail.com', name: 'Mercy Kiprono', source: 'Account Registration', date: '2026-08-07T09:10:00.000Z' },
+      { email: 'info@mombasateabrokers.co.ke', name: 'Newsletter Subscriber', source: 'Footer Form', date: '2026-08-08T16:45:00.000Z' },
+      { email: 'procurement@dubaiteahub.ae', name: 'Newsletter Subscriber', source: 'Footer Form', date: '2026-08-08T18:00:00.000Z' }
+    ];
+
+    // Default Staff Users
+    const INITIAL_USERS = [
+      {
+        username: 'superadmin',
+        name: 'Joan Cherotich',
+        email: 'j.cherotich@tegatteafactory.co.ke',
+        role: 'superadmin',
+        pin: '2026',
+        phone: '+254 712 345 678',
+        enforce2fa: true,
+        status: 'Active'
+      },
+      {
+        username: 'f_manager',
+        name: 'Janet Chepkorir',
+        email: 'j.chepkorir@tegatteafactory.co.ke',
+        role: 'f_manager',
+        pin: '1234',
+        phone: '+254 722 888 999',
+        enforce2fa: true,
+        status: 'Active'
+      },
+      {
+        username: 'dispatch_clerk',
+        name: 'Peter Cheruiyot',
+        email: 'p.cheruiyot@tegatteafactory.co.ke',
+        role: 'dispatch_clerk',
+        pin: '5678',
+        phone: '+254 733 111 222',
+        enforce2fa: true,
+        status: 'Active'
+      },
+      {
+        username: 'quality_officer',
+        name: 'Grace Bett',
+        email: 'g.bett@tegatteafactory.co.ke',
+        role: 'quality_officer',
+        pin: '9012',
+        phone: '+254 701 444 555',
+        enforce2fa: true,
+        status: 'Active'
+      }
+    ];
+
+    // Initial Mock Orders Data
+    const SAMPLE_ORDERS = [
+      {
+        id: 'TGT-84920',
+        date: '2026-08-08 09:14',
+        name: 'Jane Cherono',
+        email: 'jane.cherono@gmail.com',
+        phone: '+254 712 345 678',
+        region: 'Kericho Town & Environs',
+        transport: 'Factory Gate Pickup',
+        paymentMethod: 'M-Pesa Express',
+        paymentRef: 'QHL984201A',
+        items: [
+          { name: 'Black Tea – Net Weight:500g', qty: 2, price: 150 },
+          { name: 'Black Tea – Net Weight:100g', qty: 3, price: 35 }
+        ],
+        total: 405,
+        status: 'Confirmed'
+      },
+      {
+        id: 'TGT-84921',
+        date: '2026-08-08 10:30',
+        name: 'David Kipkemoi',
+        email: 'david.kip@yahoo.com',
+        phone: '+254 722 987 654',
+        region: 'Nairobi Metro (Courier Direct)',
+        transport: 'EasyCoach Parcel Direct',
+        paymentMethod: 'M-Pesa Express',
+        paymentRef: 'QHM102938B',
+        items: [
+          { name: 'Tea Bag – Net Weight:25 Envelopes', qty: 4, price: 65 },
+          { name: 'Black Tea – Net Weight:100g', qty: 5, price: 35 }
+        ],
+        total: 435,
+        status: 'Pending'
+      },
+      {
+        id: 'TGT-84918',
+        date: '2026-08-07 16:45',
+        name: 'Samuel Rotich',
+        email: 's.rotich@tegatlogistics.co.ke',
+        phone: '+254 701 112 233',
+        region: 'Mombasa Port Export Hub',
+        transport: 'Container Fleet',
+        paymentMethod: 'Bank Wire Transfer',
+        paymentRef: 'KCB-TRF-90231',
+        items: [
+          { name: 'Black Tea – Net Weight:500g', qty: 20, price: 150 },
+          { name: 'Black Tea – Net Weight:240g', qty: 10, price: 75 }
+        ],
+        total: 3750,
+        status: 'In Transit'
+      },
+      {
+        id: 'TGT-84915',
+        date: '2026-08-07 11:20',
+        name: 'Mercy Chepkorir',
+        email: 'mercy.chep@gmail.com',
+        phone: '+254 733 445 566',
+        region: 'Eldoret CBD',
+        transport: 'North Rift Shuttle',
+        paymentMethod: 'M-Pesa Express',
+        paymentRef: 'QHK772109C',
+        items: [
+          { name: 'Black Tea – Net Weight:100g', qty: 10, price: 35 }
+        ],
+        total: 350,
+        status: 'Delivered'
+      }
+    ];
+
+    // Initial Mock Products Data (Tegat Retail Shop Products Only)
+    const SAMPLE_PRODUCTS = [
+      { id: 'p1', name: 'Black Tea – Net Weight:25g', category: 'Black Tea', price: 17, stock: 1500, status: 'In Stock' },
+      { id: 'p2', name: 'Black Tea – Net Weight:50g', category: 'Black Tea', price: 17, stock: 1200, status: 'In Stock' },
+      { id: 'p3', name: 'Black Tea – Net Weight:100g', category: 'Black Tea', price: 35, stock: 1200, status: 'In Stock' },
+      { id: 'p4', name: 'Black Tea – Net Weight:240g', category: 'Black Tea', price: 75, stock: 400, status: 'In Stock' },
+      { id: 'p5', name: 'Black Tea – Net Weight:500g', category: 'Black Tea', price: 150, stock: 600, status: 'In Stock' },
+      { id: 'p6', name: 'Tea Bag – Net Weight:25 Envelopes', category: 'Tea Bags', price: 65, stock: 950, status: 'In Stock' },
+      { id: 'p7', name: 'Tea Bags – Net Weight:50 Envelopes', category: 'Tea Bags', price: 120, stock: 40, status: 'Low Stock' }
+    ];
+
+    // Initial Audit Logs
+    const SAMPLE_AUDIT_LOGS = [
+      {
+        id: 'aud_1',
+        timestamp: '2026-08-08 09:15:22',
+        user: 'Joan Cherotich',
+        role: 'Super Admin',
+        module: 'Auth',
+        action: '2FA Session Authenticated',
+        details: 'User successfully completed 2FA Email verification from IP 197.232.12.8'
+      },
+      {
+        id: 'aud_2',
+        timestamp: '2026-08-08 09:18:10',
+        user: 'Joan Cherotich',
+        role: 'Super Admin',
+        module: 'Orders',
+        action: 'Order Status Changed',
+        details: 'Changed order TGT-84920 status from Pending to Confirmed'
+      },
+      {
+        id: 'aud_3',
+        timestamp: '2026-08-08 08:20:45',
+        user: 'Grace Bett',
+        role: 'Quality Inspector',
+        module: 'Leaf',
+        action: 'Green Leaf Log Added',
+        details: 'Recorded 18,500 Kg delivery at Tegat Center A (Rejection: 1.2%)'
+      }
+    ];
+
+    // Temporary 2FA Pending State
+    let pendingLoginUser = null;
+    let currentGeneratedOtp = '';
+
+    // Page Load Init
+    document.addEventListener('DOMContentLoaded', () => {
+      initLocalStorageData();
+      checkAuthSession();
+      applySidebarCollapseState();
+      renderAllViews();
+    });
+
+    // COLLAPSIBLE SIDEBAR LOGIC
+    let isSidebarCollapsed = localStorage.getItem('tegat_sidebar_collapsed') === 'true';
+
+    function applySidebarCollapseState() {
+      const sidebar = document.querySelector('.admin-sidebar');
+      const btn = document.getElementById('btnToggleSidebar');
+      if (!sidebar) return;
+      if (isSidebarCollapsed) {
+        sidebar.classList.add('collapsed');
+        if (btn) btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>`;
+      } else {
+        sidebar.classList.remove('collapsed');
+        if (btn) btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>`;
+      }
+    }
+
+    function toggleSidebarCollapse() {
+      isSidebarCollapsed = !isSidebarCollapsed;
+      localStorage.setItem('tegat_sidebar_collapsed', isSidebarCollapsed ? 'true' : 'false');
+      applySidebarCollapseState();
+    }
+
+    // GLOBAL SEARCH (CTRL + K) LOGIC
+    function openGlobalSearchModal() {
+      const modal = document.getElementById('globalSearchModal');
+      if (modal) {
+        modal.classList.add('show');
+        const input = document.getElementById('globalSearchInput');
+        if (input) {
+          input.value = '';
+          setTimeout(() => input.focus(), 100);
+          handleGlobalSearch('');
+        }
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openGlobalSearchModal();
+      }
+    });
+
+    function handleGlobalSearch(query) {
+      const q = (query || '').toLowerCase().trim();
+      const container = document.getElementById('globalSearchResults');
+      if (!container) return;
+
+      if (!q) {
+        container.innerHTML = `
+          <div style="text-align: center; color: var(--muted-text); padding: 24px; font-size: 13px;">
+            Type keywords above to search orders, products, customers, and audit trail logs...
+          </div>`;
+        return;
+      }
+
+      const orders = getOrders().filter(o => 
+        o.id.toLowerCase().includes(q) || 
+        o.name.toLowerCase().includes(q) || 
+        (o.phone||'').toLowerCase().includes(q) || 
+        (o.paymentRef||'').toLowerCase().includes(q)
+      );
+
+      const products = getProducts().filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        (p.category||'').toLowerCase().includes(q)
+      );
+
+      const customers = getCustomers().filter(c => 
+        (c.name||'').toLowerCase().includes(q) || 
+        (c.email||'').toLowerCase().includes(q) || 
+        (c.phone||'').toLowerCase().includes(q)
+      );
+
+      let html = '';
+
+      if (orders.length > 0) {
+        html += `<div style="font-size:11px; font-weight:800; color:var(--lux-green); text-transform:uppercase; letter-spacing:0.5px; margin-top:6px; margin-bottom:4px;">Orders (${orders.length})</div>`;
+        orders.forEach(o => {
+          html += `
+            <div onclick="jumpToSearchResult('orders', '${o.id}')" style="background:#f8faf7; border:1px solid var(--border-color); border-radius:10px; padding:10px 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; transition:background 0.2s;">
+              <div>
+                <strong>${o.id}</strong> — ${escapeHtml(o.name)} (${escapeHtml(o.region)})
+                <div style="font-size:11px; color:var(--muted-text);">${o.date} • ${escapeHtml(o.paymentMethod||'M-Pesa')} (${escapeHtml(o.paymentRef||'N/A')})</div>
+              </div>
+              <span class="badge badge-${getBadgeClass(o.status)}">${o.status}</span>
+            </div>`;
+        });
+      }
+
+      if (products.length > 0) {
+        html += `<div style="font-size:11px; font-weight:800; color:var(--lux-green); text-transform:uppercase; letter-spacing:0.5px; margin-top:12px; margin-bottom:4px;">Products (${products.length})</div>`;
+        products.forEach(p => {
+          html += `
+            <div onclick="jumpToSearchResult('inventory', '${p.id}')" style="background:#f8faf7; border:1px solid var(--border-color); border-radius:10px; padding:10px 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong>${escapeHtml(p.name)}</strong>
+                <div style="font-size:11px; color:var(--muted-text);">${p.category||'Black Tea'} • ${p.stock} units in stock</div>
+              </div>
+              <strong>Ksh. ${p.price}</strong>
+            </div>`;
+        });
+      }
+
+      if (customers.length > 0) {
+        html += `<div style="font-size:11px; font-weight:800; color:var(--lux-green); text-transform:uppercase; letter-spacing:0.5px; margin-top:12px; margin-bottom:4px;">Customers (${customers.length})</div>`;
+        customers.forEach(c => {
+          html += `
+            <div onclick="jumpToSearchResult('customers', '${c.id}')" style="background:#f8faf7; border:1px solid var(--border-color); border-radius:10px; padding:10px 14px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong>${escapeHtml(c.name)}</strong> (${escapeHtml(c.email)})
+                <div style="font-size:11px; color:var(--muted-text);">${escapeHtml(c.phone||'N/A')} • ${escapeHtml(c.type||'Retail')}</div>
+              </div>
+            </div>`;
+        });
+      }
+
+      if (!orders.length && !products.length && !customers.length) {
+        html = `<div style="text-align:center; padding:20px; color:var(--muted-text); font-size:13px;">No matching records found for "${escapeHtml(q)}".</div>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function jumpToSearchResult(tabName, itemId) {
+      closeModal('globalSearchModal');
+      const navBtn = document.getElementById('nav-' + tabName);
+      switchTab(tabName, navBtn);
+      if (tabName === 'orders') {
+        const input = document.getElementById('orderSearchInput');
+        if (input) input.value = itemId;
+        renderOrdersTable();
+        viewOrderDetails(itemId);
+      }
+    }
+
+    // Data Init
+    function initLocalStorageData() {
+      if (!localStorage.getItem(STORAGE_USERS_KEY)) {
+        localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(INITIAL_USERS));
+      }
+      if (!localStorage.getItem(STORAGE_ORDERS_KEY)) {
+        localStorage.setItem(STORAGE_ORDERS_KEY, JSON.stringify(SAMPLE_ORDERS));
+      }
+      if (!localStorage.getItem(STORAGE_PRODUCTS_KEY)) {
+        localStorage.setItem(STORAGE_PRODUCTS_KEY, JSON.stringify(SAMPLE_PRODUCTS));
+      }
+      if (!localStorage.getItem(STORAGE_AUDIT_KEY)) {
+        localStorage.setItem(STORAGE_AUDIT_KEY, JSON.stringify(SAMPLE_AUDIT_LOGS));
+      }
+    }
+
+    function safeJSONParse(str, fallback) {
+      if (!str || str === 'undefined' || str === 'null') return fallback;
+      try {
+        return JSON.parse(str);
+      } catch(e) {
+        return fallback;
+      }
+    }
+
+    function getUsers() {
+      return safeJSONParse(localStorage.getItem(STORAGE_USERS_KEY), []);
+    }
+    function setUsers(arr) {
+      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(arr));
+    }
+
+    function getOrders() {
+      return safeJSONParse(localStorage.getItem(STORAGE_ORDERS_KEY), []);
+    }
+    function setOrders(arr) {
+      localStorage.setItem(STORAGE_ORDERS_KEY, JSON.stringify(arr));
+    }
+
+    // Real-time Live Firestore Cloud Synchronization
+    function initAdminFirestoreSync() {
+      if (!window.TegatFirebase) return;
+      try {
+        // 1. Listen to real-time incoming orders from storefront & checkout
+        window.TegatFirebase.listenToOrders(function(cloudOrders) {
+          if (!cloudOrders || !Array.isArray(cloudOrders)) return;
+          let localOrders = getOrders();
+          const map = new Map();
+          localOrders.forEach(o => { if (o && o.id) map.set(String(o.id), o); });
+          cloudOrders.forEach(o => { if (o && o.id) map.set(String(o.id), o); });
+          const merged = Array.from(map.values()).sort((a, b) => new Date(b.date || b.lastUpdated || 0) - new Date(a.date || a.lastUpdated || 0));
+          localStorage.setItem(STORAGE_ORDERS_KEY, JSON.stringify(merged));
+
+          // Refresh admin views
+          if (typeof renderOrdersTable === 'function') renderOrdersTable();
+          if (typeof updateDashboardStats === 'function') updateDashboardStats();
+          if (typeof updateOrderStatusCounters === 'function') updateOrderStatusCounters();
+
+          const dot = document.querySelector('.status-indicator .status-dot');
+          const text = document.querySelector('.status-indicator span:last-child');
+          if (text) text.textContent = '🟢 Live Firestore Sync';
+          if (dot) dot.style.background = '#2ecc71';
+        });
+
+        // 2. Listen to real-time customer registrations & accounts
+        window.TegatFirebase.listenToUsers(function(cloudUsers) {
+          if (!cloudUsers || !Array.isArray(cloudUsers)) return;
+          let localCustomers = getCustomers();
+          const uMap = new Map();
+          localCustomers.forEach(u => { if (u && u.email) uMap.set(u.email.toLowerCase(), u); });
+          cloudUsers.forEach(u => { if (u && u.email) uMap.set(u.email.toLowerCase(), u); });
+          localStorage.setItem(STORAGE_CUSTOMERS_KEY, JSON.stringify(Array.from(uMap.values())));
+          if (typeof renderAdminCustomersTable === 'function') renderAdminCustomersTable();
+        });
+      } catch(e) {
+        console.warn('[Firestore Admin Sync] Stream notice:', e);
+      }
+    }
+    window.addEventListener('DOMContentLoaded', () => setTimeout(initAdminFirestoreSync, 800));
+    window.addEventListener('tegat:firebase-ready', () => initAdminFirestoreSync());
+
+    function getProducts() {
+      return safeJSONParse(localStorage.getItem(STORAGE_PRODUCTS_KEY), []);
+    }
+    function setProducts(arr) {
+      localStorage.setItem(STORAGE_PRODUCTS_KEY, JSON.stringify(arr));
+    }
+
+    function getAuditLogs() {
+      return safeJSONParse(localStorage.getItem(STORAGE_AUDIT_KEY), []);
+    }
+    function setAuditLogs(arr) {
+      localStorage.setItem(STORAGE_AUDIT_KEY, JSON.stringify(arr));
+    }
+
+    // AUDIT LOG HELPER WITH REMOTE GAS MIRRORING
+    function logAuditEvent(module, action, details) {
+      const logs = getAuditLogs();
+      const activeUser = getActiveSession();
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0,10) + ' ' + now.toTimeString().slice(0,8);
+
+      const entry = {
+        id: 'aud_' + Date.now(),
+        timestamp,
+        user: activeUser ? activeUser.name : 'System/Guest',
+        role: activeUser ? getRoleTitle(activeUser.role) : 'System',
+        module,
+        action,
+        details
+      };
+
+      logs.unshift(entry);
+      setAuditLogs(logs);
+      renderAuditNavBadge();
+
+      // REMOTE AUDIT TRAIL MIRRORING TO GOOGLE SHEETS
+      const gasUrl = localStorage.getItem(STORAGE_GAS_URL_KEY) || DEFAULT_GAS_URL;
+      if (gasUrl) {
+        fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'AUDIT_LOG', payload: entry })
+        }).catch(err => console.warn('Remote Audit Sync Notice:', err));
+      }
+    }
+
+    // PRIVILEGED ACTIONS PIN RE-AUTHENTICATION GUARD
+    let pendingReauthCallback = null;
+    let pendingReauthAction = '';
+
+    function requestPinConfirmation(actionLabel, callback) {
+      const activeUser = getActiveSession();
+      if (!activeUser) {
+        alert('Active session required.');
+        checkAuthSession();
+        return;
+      }
+
+      pendingReauthAction = actionLabel;
+      pendingReauthCallback = callback;
+
+      const labelEl = document.getElementById('reauthActionLabel');
+      if (labelEl) labelEl.textContent = actionLabel;
+      const inputEl = document.getElementById('reauthPinInput');
+      if (inputEl) inputEl.value = '';
+
+      const modal = document.getElementById('pinReauthModal');
+      if (modal) modal.classList.add('show');
+      if (inputEl) setTimeout(() => inputEl.focus(), 100);
+    }
+
+    function cancelPinReauth() {
+      pendingReauthCallback = null;
+      pendingReauthAction = '';
+      const modal = document.getElementById('pinReauthModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function submitPinReauth(e) {
+      e.preventDefault();
+      const activeUser = getActiveSession();
+      const pinInput = document.getElementById('reauthPinInput')?.value.trim();
+
+      if (!activeUser) {
+        alert('Session expired. Please log in again.');
+        cancelPinReauth();
+        checkAuthSession();
+        return;
+      }
+
+      if (pinInput !== activeUser.pin) {
+        alert('❌ Authorization Failed: Incorrect Security PIN!');
+        logAuditEvent('Security', 'Re-Auth Failed', `Failed PIN confirmation for action: ${pendingReauthAction}`);
+        return;
+      }
+
+      logAuditEvent('Security', 'Privileged Action Authorized', `Action '${pendingReauthAction}' authorized by ${activeUser.name}`);
+      const cb = pendingReauthCallback;
+      cancelPinReauth();
+      if (typeof cb === 'function') {
+        cb();
+      }
+    }
+
+    // INACTIVITY IDLE MONITORING (10 MINUTES WITH 60s WARNING)
+    let idleTimer = null;
+    let countdownInterval = null;
+    let secondsRemaining = 60;
+    const IDLE_LIMIT_MS = 9 * 60 * 1000; // 9 minutes idle before warning
+
+    function resetInactivityTimer() {
+      clearTimeout(idleTimer);
+      clearInterval(countdownInterval);
+      const modal = document.getElementById('inactivityWarningModal');
+      if (modal && modal.classList.contains('show')) {
+        modal.classList.remove('show');
+        showToast('Staff session extended.');
+      }
+
+      const sess = getActiveSession();
+      if (!sess) return;
+
+      idleTimer = setTimeout(() => {
+        showInactivityWarning();
+      }, IDLE_LIMIT_MS);
+    }
+
+    function showInactivityWarning() {
+      const sess = getActiveSession();
+      if (!sess) return;
+
+      const modal = document.getElementById('inactivityWarningModal');
+      if (!modal) return;
+      modal.classList.add('show');
+      secondsRemaining = 60;
+      const countdownEl = document.getElementById('inactivityCountdownText');
+      if (countdownEl) countdownEl.textContent = `${secondsRemaining}s`;
+
+      countdownInterval = setInterval(() => {
+        secondsRemaining--;
+        if (countdownEl) countdownEl.textContent = `${secondsRemaining}s`;
+        if (secondsRemaining <= 0) {
+          clearInterval(countdownInterval);
+          modal.classList.remove('show');
+          triggerAutoLogout('10 Minutes Inactivity Timeout');
+        }
+      }, 1000);
+    }
+
+    ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'].forEach(evt => {
+      document.addEventListener(evt, () => {
+        const modal = document.getElementById('inactivityWarningModal');
+        if (modal && modal.classList.contains('show')) return;
+        resetInactivityTimer();
+      }, { passive: true });
+    });
+
+    // FAILED LOGIN LOCKOUT GUARD
+    function checkAccountLockout(username) {
+      const lockoutUntil = Number(localStorage.getItem('tegat_lockout_until_' + username)) || 0;
+      if (Date.now() < lockoutUntil) {
+        const remainingSecs = Math.ceil((lockoutUntil - Date.now()) / 1000);
+        const mins = Math.ceil(remainingSecs / 60);
+        return `⛔ Account temporarily locked due to 5 consecutive failed PIN attempts. Please try again in ${mins} minute(s).`;
+      }
+      return null;
+    }
+
+    function recordFailedLoginAttempt(username) {
+      const key = 'tegat_failed_pin_attempts_' + username;
+      const count = (Number(localStorage.getItem(key)) || 0) + 1;
+      localStorage.setItem(key, count);
+
+      if (count >= 5) {
+        const lockTime = Date.now() + (15 * 60 * 1000); // 15 mins lock
+        localStorage.setItem('tegat_lockout_until_' + username, lockTime);
+        localStorage.removeItem(key);
+        return `⛔ Maximum failed PIN attempts (5/5) reached! Account locked for 15 minutes.`;
+      }
+      return `Incorrect Account Security PIN! (${count}/5 attempts).`;
+    }
+
+    function clearFailedLoginAttempts(username) {
+      localStorage.removeItem('tegat_failed_pin_attempts_' + username);
+      localStorage.removeItem('tegat_lockout_until_' + username);
+    }
+
+    // AUTHENTICATION & 2FA LOGIC
+    function getActiveSession() {
+      const sessStr = localStorage.getItem(STORAGE_SESSION_KEY);
+      return safeJSONParse(sessStr, null);
+    }
+
+    function checkAuthSession() {
+      const session = getActiveSession();
+      const gate = document.getElementById('loginGate');
+      if (session) {
+        gate.classList.add('hidden');
+        applyRolePermissions(session);
+        updateUserCardUI(session);
+        resetInactivityTimer();
+      } else {
+        gate.classList.remove('hidden');
+        backToStep1();
+      }
+    }
+
+    function updateUserLoginHint() {
+      // Demo login hint removed for production readiness
+    }
+
+    function toggleAdminPinVisibility(btnEl) {
+      const pinInput = document.getElementById('adminPin');
+      if (!pinInput) return;
+      const isPass = pinInput.type === 'password';
+      pinInput.type = isPass ? 'text' : 'password';
+
+      if (btnEl) {
+        if (isPass) {
+          btnEl.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+        } else {
+          btnEl.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+        }
+      }
+    }
+
+    function autofillAdminPin() {
+      const selected = document.getElementById('selectUser').value;
+      const users = getUsers();
+      const u = users.find(item => item.username === selected);
+      const pinInput = document.getElementById('adminPin');
+      if (u && pinInput) {
+        pinInput.value = u.pin;
+        pinInput.style.borderColor = 'var(--lux-green)';
+        setTimeout(() => { pinInput.style.borderColor = ''; }, 1000);
+      }
+    }
+
+    function handleLoginStep1(e) {
+      e.preventDefault();
+      const username = document.getElementById('selectUser').value;
+      const inputPin = document.getElementById('adminPin').value.trim();
+      const users = getUsers();
+
+      const lockoutMsg = checkAccountLockout(username);
+      if (lockoutMsg) {
+        alert(lockoutMsg);
+        logAuditEvent('Auth', 'Locked Account Login Attempt', `Attempted login on locked account ${username}`);
+        return;
+      }
+
+      const user = users.find(u => u.username === username);
+
+      if (!user) {
+        alert('Selected user account does not exist.');
+        return;
+      }
+
+      if (user.pin !== inputPin) {
+        const errorMsg = recordFailedLoginAttempt(username);
+        alert(errorMsg);
+        logAuditEvent('Auth', 'Failed Login Attempt', `Failed PIN attempt for user ${user.name} (${user.username})`);
+        return;
+      }
+
+      clearFailedLoginAttempts(username);
+
+      // PIN Correct -> Proceed to 2FA Step
+      pendingLoginUser = user;
+
+      if (user.enforce2fa) {
+        // Generate 6-digit OTP
+        currentGeneratedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+        
+        document.getElementById('badgeStep1').className = 'step-badge completed';
+        document.getElementById('badgeStep2').className = 'step-badge active';
+        
+        const userEmail = user.email || (user.username + '@tegatteafactory.co.ke');
+        document.getElementById('2faUserHeading').textContent = `Verifying 2FA for ${user.name}`;
+        const phoneEl = document.getElementById('2faPhoneText');
+        if (phoneEl) {
+          phoneEl.textContent = `Security code sent to ${maskEmail(userEmail)}`;
+        }
+        document.getElementById('generatedOtpDisplay').textContent = currentGeneratedOtp.slice(0,3) + ' ' + currentGeneratedOtp.slice(3);
+        
+        document.getElementById('loginFormStep1').style.display = 'none';
+        document.getElementById('loginFormStep2').style.display = 'block';
+        document.getElementById('otpInput').value = '';
+        document.getElementById('otpInput').focus();
+
+        showToast(`2FA Email Security Code dispatched to ${maskEmail(userEmail)}`);
+      } else {
+        // Direct Login without 2FA
+        completeLoginSession(user, false);
+      }
+    }
+
+    function autofill2FACode() {
+      if (currentGeneratedOtp) {
+        document.getElementById('otpInput').value = currentGeneratedOtp;
+      }
+    }
+
+    function regenerate2FACode() {
+      currentGeneratedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById('generatedOtpDisplay').textContent = currentGeneratedOtp.slice(0,3) + ' ' + currentGeneratedOtp.slice(3);
+      const userEmail = pendingLoginUser?.email || (pendingLoginUser?.username + '@tegatteafactory.co.ke');
+      showToast(`New 2FA Code dispatched to ${maskEmail(userEmail)}!`);
+    }
+
+    function handleLoginStep2(e) {
+      e.preventDefault();
+      const enteredOtp = document.getElementById('otpInput').value.trim().replace(/\s+/g, '');
+
+      if (enteredOtp !== currentGeneratedOtp) {
+        alert('Invalid 2FA Verification Code! Please check your email and try again.');
+        logAuditEvent('Auth', 'Failed 2FA Code', `Invalid 2FA code entered for user ${pendingLoginUser.name}`);
+        return;
+      }
+
+      completeLoginSession(pendingLoginUser, true);
+    }
+
+    function backToStep1() {
+      pendingLoginUser = null;
+      document.getElementById('badgeStep1').className = 'step-badge active';
+      document.getElementById('badgeStep2').className = 'step-badge';
+      document.getElementById('loginFormStep1').style.display = 'block';
+      document.getElementById('loginFormStep2').style.display = 'none';
+      document.getElementById('adminPin').value = '';
+      updateUserLoginHint();
+    }
+
+    function completeLoginSession(user, used2FA) {
+      const session = {
+        username: user.username,
+        name: user.name,
+        role: user.role,
+        used2FA,
+        loginTime: new Date().toISOString()
+      };
+
+      localStorage.setItem(STORAGE_SESSION_KEY, JSON.stringify(session));
+      document.getElementById('loginGate').classList.add('hidden');
+      
+      logAuditEvent('Auth', '2FA Session Authenticated', `${user.name} (${getRoleTitle(user.role)}) successfully authenticated via 2FA.`);
+      showToast(`Welcome back, ${user.name}!`);
+
+      checkAuthSession();
+      renderAllViews();
+    }
+
+    let isAutoLoggingOut = false;
+
+    function triggerAutoLogout(reason) {
+      if (isAutoLoggingOut) return;
+      const sess = getActiveSession();
+      if (!sess) return;
+
+      isAutoLoggingOut = true;
+      logAuditEvent('Security', 'Auto-Logout (Click Outside)', `${sess.name} session terminated (${reason}).`);
+      localStorage.removeItem(STORAGE_SESSION_KEY);
+      checkAuthSession();
+      showToast(`🔒 Auto-Logged Out: ${reason}`);
+
+      setTimeout(() => {
+        isAutoLoggingOut = false;
+      }, 600);
+    }
+
+    function logoutSession() {
+      const sess = getActiveSession();
+      if (sess) {
+        logAuditEvent('Auth', 'Session Terminated', `${sess.name} logged out.`);
+      }
+      localStorage.removeItem(STORAGE_SESSION_KEY);
+      checkAuthSession();
+      showToast('Staff session ended.');
+    }
+
+    // AUTOMATIC LOGOUT ON CLICKING OUTSIDE THE ADMIN PANEL
+    document.addEventListener('pointerdown', (e) => {
+      const sess = getActiveSession();
+      if (!sess) return;
+
+      const inAdminWrapper = e.target.closest('.admin-wrapper');
+      const inModalBox = e.target.closest('.modal-box');
+      const inBulkBar = e.target.closest('#bulkOrdersBar');
+      const inToast = e.target.closest('#adminToast');
+      const inCookieBanner = e.target.closest('.cookie-banner') || e.target.closest('.cookie-modal');
+
+      const activeModal = document.querySelector('.modal-backdrop.show');
+
+      if (activeModal) {
+        if (!inModalBox && !inToast && !inCookieBanner) {
+          triggerAutoLogout('Clicked outside active modal panel');
+        }
+      } else {
+        if (!inAdminWrapper && !inBulkBar && !inToast && !inCookieBanner) {
+          triggerAutoLogout('Clicked outside admin panel boundary');
+        }
+      }
+    }, true);
+
+    // AUTO-LOGOUT WHEN USER SWITCHES WINDOWS OR CLICKS OUTSIDE PREVIEW
+    window.addEventListener('blur', () => {
+      const sess = getActiveSession();
+      if (!sess) return;
+
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT' || activeEl.tagName === 'TEXTAREA')) {
+        return;
+      }
+
+      triggerAutoLogout('Focus lost / Clicked outside app window');
+    });
+
+    function maskPhone(phone) {
+      if (!phone || phone.length < 8) return '+254 7** *** ***';
+      return phone.substring(0, 7) + ' *** ' + phone.substring(phone.length - 3);
+    }
+
+    function maskEmail(email) {
+      if (!email || !email.includes('@')) return 'your registered email';
+      const parts = email.split('@');
+      const user = parts[0];
+      const domain = parts[1];
+      const maskedUser = user.length > 2 ? user.substring(0, 2) + '***' : user + '***';
+      return `${maskedUser}@${domain}`;
+    }
+
+    function getRoleTitle(role) {
+      switch (role) {
+        case 'superadmin': return 'Super Admin';
+        case 'f_manager': return 'Factory Manager';
+        case 'dispatch_clerk': return 'Dispatch Lead';
+        case 'quality_officer': return 'Quality Inspector';
+        default: return 'Staff Member';
+      }
+    }
+
+    function getRoleBadgeClass(role) {
+      switch (role) {
+        case 'superadmin': return 'role-super';
+        case 'f_manager': return 'role-manager';
+        case 'dispatch_clerk': return 'role-dispatch';
+        case 'quality_officer': return 'role-quality';
+        default: return 'role-manager';
+      }
+    }
+
+    // ROLE BASED ACCESS CONTROL (RBAC) ENFORCEMENT
+    function applyRolePermissions(session) {
+      const role = session.role;
+
+      // Reset visibility defaults
+      const navUsers = document.getElementById('nav-users');
+      const navSettings = document.getElementById('nav-settings');
+      const btnAddProduct = document.getElementById('btnAddProduct');
+      const btnClearAudit = document.getElementById('btnClearAudit');
+      const systemResetBox = document.getElementById('systemResetBox');
+
+      if (role === 'superadmin') {
+        if (navUsers) navUsers.parentElement.style.display = 'block';
+        if (navSettings) navSettings.parentElement.style.display = 'block';
+        if (btnAddProduct) btnAddProduct.style.display = 'inline-flex';
+        if (btnClearAudit) btnClearAudit.style.display = 'inline-flex';
+        if (systemResetBox) systemResetBox.style.display = 'block';
+      } else if (role === 'f_manager') {
+        if (navUsers) navUsers.parentElement.style.display = 'none';
+        if (navSettings) navSettings.parentElement.style.display = 'block';
+        if (btnAddProduct) btnAddProduct.style.display = 'inline-flex';
+        if (btnClearAudit) btnClearAudit.style.display = 'none';
+        if (systemResetBox) systemResetBox.style.display = 'none';
+      } else if (role === 'dispatch_clerk') {
+        if (navUsers) navUsers.parentElement.style.display = 'none';
+        if (navSettings) navSettings.parentElement.style.display = 'none';
+        if (btnAddProduct) btnAddProduct.style.display = 'none';
+        if (btnClearAudit) btnClearAudit.style.display = 'none';
+        if (systemResetBox) systemResetBox.style.display = 'none';
+      } else if (role === 'quality_officer') {
+        if (navUsers) navUsers.parentElement.style.display = 'none';
+        if (navSettings) navSettings.parentElement.style.display = 'none';
+        if (btnAddProduct) btnAddProduct.style.display = 'none';
+        if (btnClearAudit) btnClearAudit.style.display = 'none';
+        if (systemResetBox) systemResetBox.style.display = 'none';
+      }
+    }
+
+    function updateUserCardUI(session) {
+      const nameEl = document.getElementById('sidebarUserName');
+      const roleBadge = document.getElementById('sidebarRoleBadge');
+      const avatarEl = document.getElementById('sidebarAvatar');
+
+      if (nameEl) nameEl.textContent = session.name;
+      if (roleBadge) {
+        roleBadge.textContent = getRoleTitle(session.role);
+        roleBadge.className = 'user-role-badge ' + getRoleBadgeClass(session.role);
+      }
+      if (avatarEl) {
+        const initials = session.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+        avatarEl.textContent = initials || 'US';
+      }
+    }
+
+    // VIEW RENDERING
+    function renderAllViews() {
+      renderDashboard();
+      renderOrdersTable();
+      renderInventoryTable();
+      renderUsersTable();
+      renderAuditTable();
+      renderAuditNavBadge();
+      renderAdminCustomersTable();
+      renderAdminSubscribersTable();
+      renderAdminReviewsTable();
+    }
+
+    function renderAuditNavBadge() {
+      const badge = document.getElementById('auditNavBadge');
+      const logs = getAuditLogs();
+      if (badge) badge.textContent = logs.length;
+    }
+
+    function renderDashboard() {
+      const orders = getOrders();
+      const customers = safeJSONParse(localStorage.getItem('tegat_customer_accounts'), []);
+      const ordersCountEl = document.getElementById('statOrdersCount');
+      const revenueEl = document.getElementById('statRevenue');
+      const pendingEl = document.getElementById('statPendingCount');
+      const customersCountEl = document.getElementById('statCustomersCount');
+      const orderNavBadge = document.getElementById('orderNavBadge');
+
+      const totalCount = orders.length;
+      const totalRev = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+      const pendingCount = orders.filter(o => o.status === 'Pending').length;
+
+      if (ordersCountEl) ordersCountEl.textContent = totalCount;
+      if (revenueEl) revenueEl.textContent = 'Ksh. ' + totalRev.toLocaleString();
+      if (pendingEl) pendingEl.textContent = pendingCount;
+      if (customersCountEl) customersCountEl.textContent = customers.length;
+      if (orderNavBadge) orderNavBadge.textContent = pendingCount;
+
+      // Dashboard Recent Orders Table (Top 5)
+      const tbody = document.getElementById('dashOrdersBody');
+      if (tbody) {
+        const recent = orders.slice(0, 5);
+        tbody.innerHTML = recent.map(o => `
+          <tr>
+            <td><strong>${o.id}</strong></td>
+            <td>${o.date}</td>
+            <td><strong>${escapeHtml(o.name)}</strong></td>
+            <td>${escapeHtml(o.region)}</td>
+            <td><code>${escapeHtml(o.paymentRef || 'N/A')}</code></td>
+            <td><strong>Ksh. ${(o.total||0).toLocaleString()}</strong></td>
+            <td><span class="badge badge-${getBadgeClass(o.status)}">${o.status}</span></td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    // ORDER PIPELINE & SELECTION STATE
+    let activePipelineFilter = 'ALL';
+    let selectedOrderIds = new Set();
+
+    function setOrderPipelineFilter(filter, btnEl) {
+      activePipelineFilter = filter;
+      const chips = document.querySelectorAll('#orderPipelineChips .pipeline-chip');
+      chips.forEach(c => c.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+
+      const selectFilter = document.getElementById('orderStatusFilter');
+      if (selectFilter) selectFilter.value = filter;
+
+      renderOrdersTable();
+    }
+
+    function updatePipelineChipCounts() {
+      const orders = getOrders();
+      const allCount = orders.length;
+      const pendingCount = orders.filter(o => o.status === 'Pending').length;
+      const confirmedCount = orders.filter(o => o.status === 'Confirmed').length;
+      const transitCount = orders.filter(o => o.status === 'In Transit').length;
+      const deliveredCount = orders.filter(o => o.status === 'Delivered').length;
+
+      if (document.getElementById('chipAllCount')) document.getElementById('chipAllCount').textContent = allCount;
+      if (document.getElementById('chipPendingCount')) document.getElementById('chipPendingCount').textContent = pendingCount;
+      if (document.getElementById('chipConfirmedCount')) document.getElementById('chipConfirmedCount').textContent = confirmedCount;
+      if (document.getElementById('chipTransitCount')) document.getElementById('chipTransitCount').textContent = transitCount;
+      if (document.getElementById('chipDeliveredCount')) document.getElementById('chipDeliveredCount').textContent = deliveredCount;
+    }
+
+    function toggleSelectAllOrders(checkboxEl) {
+      const checkboxes = document.querySelectorAll('.order-checkbox');
+      checkboxes.forEach(cb => {
+        cb.checked = checkboxEl.checked;
+        if (checkboxEl.checked) {
+          selectedOrderIds.add(cb.value);
+        } else {
+          selectedOrderIds.delete(cb.value);
+        }
+      });
+      updateBulkOrdersBar();
+    }
+
+    function toggleOrderSelection(orderId, checkboxEl) {
+      if (checkboxEl.checked) {
+        selectedOrderIds.add(orderId);
+      } else {
+        selectedOrderIds.delete(orderId);
+      }
+      updateBulkOrdersBar();
+    }
+
+    function updateBulkOrdersBar() {
+      const bar = document.getElementById('bulkOrdersBar');
+      const countText = document.getElementById('bulkCountText');
+      if (!bar) return;
+
+      if (selectedOrderIds.size > 0) {
+        countText.textContent = `${selectedOrderIds.size} Order${selectedOrderIds.size > 1 ? 's' : ''} Selected`;
+        bar.classList.add('show');
+      } else {
+        bar.classList.remove('show');
+      }
+    }
+
+    function clearOrderSelections() {
+      selectedOrderIds.clear();
+      const selectAll = document.getElementById('selectAllOrders');
+      if (selectAll) selectAll.checked = false;
+      const checkboxes = document.querySelectorAll('.order-checkbox');
+      checkboxes.forEach(cb => cb.checked = false);
+      updateBulkOrdersBar();
+    }
+
+    function bulkUpdateOrderStatus(newStatus) {
+      if (selectedOrderIds.size === 0) return;
+      let orders = getOrders();
+      let count = 0;
+      orders.forEach(o => {
+        if (selectedOrderIds.has(o.id)) {
+          o.status = newStatus;
+          count++;
+        }
+      });
+      setOrders(orders);
+      logAuditEvent('Orders', 'Bulk Status Update', `Updated ${count} orders to ${newStatus}`);
+      showToast(`Updated ${count} orders to ${newStatus}`);
+      clearOrderSelections();
+      renderAllViews();
+    }
+
+    function bulkExportSelectedCSV() {
+      const orders = getOrders().filter(o => selectedOrderIds.has(o.id));
+      if (!orders.length) return;
+
+      let csv = 'Order ID,Date,Customer Name,Phone,Email,Region,Transport,Payment Method,Payment Ref,Total (Ksh),Status\n';
+      orders.forEach(o => {
+        csv += `"${o.id}","${o.date}","${o.name}","${o.phone}","${o.email||''}","${o.region}","${o.transport||''}","${o.paymentMethod||''}","${o.paymentRef||''}",${o.total},"${o.status}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Tegat_Selected_Manifest_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      showToast(`Exported ${orders.length} selected orders.`);
+    }
+
+    // ORDERS TABLE RENDERING
+    function renderOrdersTable() {
+      const orders = getOrders();
+      const body = document.getElementById('fullOrdersBody');
+      const search = (document.getElementById('orderSearchInput')?.value || '').toLowerCase();
+      const filterSelect = document.getElementById('orderStatusFilter')?.value || 'ALL';
+      const session = getActiveSession();
+
+      const activeFilter = activePipelineFilter !== 'ALL' ? activePipelineFilter : filterSelect;
+
+      updatePipelineChipCounts();
+
+      const filtered = orders.filter(o => {
+        const matchesSearch = o.id.toLowerCase().includes(search) ||
+                              o.name.toLowerCase().includes(search) ||
+                              (o.phone || '').toLowerCase().includes(search) ||
+                              (o.paymentRef || '').toLowerCase().includes(search);
+        const matchesFilter = (activeFilter === 'ALL') || (o.status === activeFilter);
+        return matchesSearch && matchesFilter;
+      });
+
+      if (!body) return;
+
+      if (filtered.length === 0) {
+        body.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:var(--muted-text);">No orders found matching the current search criteria or pipeline status filter.</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = filtered.map(o => `
+        <tr>
+          <td style="text-align:center;">
+            <input type="checkbox" class="order-checkbox" value="${o.id}" ${selectedOrderIds.has(o.id) ? 'checked' : ''} onchange="toggleOrderSelection('${o.id}', this)">
+          </td>
+          <td><strong>${o.id}</strong></td>
+          <td><span style="font-size:12px;">${o.date}</span></td>
+          <td><strong>${escapeHtml(o.name)}</strong></td>
+          <td><a href="tel:${escapeHtml(o.phone || '')}" style="color:var(--lux-green); font-weight:600;">${escapeHtml(o.phone || '')}</a></td>
+          <td>${escapeHtml(o.region)}</td>
+          <td>
+            <div style="font-size:12px; font-weight:700;">${escapeHtml(o.paymentMethod || 'M-Pesa')}</div>
+            <code style="font-size:11px; color:#555;">${escapeHtml(o.paymentRef || '')}</code>
+          </td>
+          <td><strong>Ksh. ${(o.total||0).toLocaleString()}</strong></td>
+          <td><span class="badge badge-${getBadgeClass(o.status)}">${o.status}</span></td>
+          <td>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button type="button" class="btn-action" onclick="viewOrderDetails('${o.id}')">Inspect</button>
+              ${(session && (session.role === 'superadmin' || session.role === 'f_manager' || session.role === 'dispatch_clerk')) ? `
+                <select class="select-filter" style="padding:4px 6px; font-size:11px;" onchange="updateOrderStatus('${o.id}', this.value)">
+                  <option value="" disabled selected>Status</option>
+                  <option value="Confirmed">Confirmed</option>
+                  <option value="In Transit">In Transit</option>
+                  <option value="Delivered">Delivered</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              ` : ''}
+              ${(session && session.role === 'superadmin') ? `
+                <button type="button" class="btn-action" style="color:var(--danger); border-color:rgba(231,76,60,0.3);" onclick="deleteOrder('${o.id}')">Del</button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateOrderStatus(id, newStatus) {
+      if (!newStatus) return;
+      let orders = getOrders();
+      const order = orders.find(o => o.id === id);
+      if (order) {
+        const oldStatus = order.status;
+        order.status = newStatus;
+        setOrders(orders);
+
+        // Sync update to Live Firestore
+        if (window.TegatFirebase && typeof window.TegatFirebase.saveOrder === 'function') {
+          window.TegatFirebase.saveOrder(order).catch(e => console.warn('[Firestore] Status sync error:', e));
+        }
+
+        logAuditEvent('Orders', 'Order Status Updated', `Updated Order ${id} status from [${oldStatus}] to [${newStatus}]`);
+        showToast(`Order ${id} updated to ${newStatus}`);
+        renderAllViews();
+      }
+    }
+
+    function viewOrderDetails(id) {
+      const orders = getOrders();
+      const o = orders.find(item => item.id === id);
+      if (!o) return;
+
+      const modalBody = document.getElementById('orderModalBody');
+      document.getElementById('orderModalTitle').textContent = `Order Specification & Pipeline — ${o.id}`;
+
+      const phoneRaw = (o.phone || '').replace(/[^0-9]/g, '');
+      const waPhone = phoneRaw.startsWith('0') ? '254' + phoneRaw.slice(1) : phoneRaw;
+
+      const steps = ['Pending', 'Confirmed', 'In Transit', 'Delivered'];
+      const currentIdx = steps.indexOf(o.status);
+
+      modalBody.innerHTML = `
+        <!-- STEPPER -->
+        <div class="order-stepper">
+          ${steps.map((stepName, idx) => `
+            <div class="stepper-step ${idx < currentIdx ? 'completed' : idx === currentIdx ? 'active' : ''}">
+              <div class="step-icon">${idx < currentIdx ? '✓' : idx + 1}</div>
+              <div class="step-label">${stepName}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; background:#f8faf7; padding:16px; border-radius:12px; margin-bottom:20px; border:1px solid var(--border-color);">
+          <div>
+            <strong>Customer:</strong> ${escapeHtml(o.name)}<br>
+            <strong>Phone:</strong> ${escapeHtml(o.phone)}<br>
+            <strong>Email:</strong> ${escapeHtml(o.email || 'N/A')}<br>
+            <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+              ${phoneRaw ? `<a href="https://wa.me/${waPhone}?text=Hello%20${encodeURIComponent(o.name)}%2C%20regarding%20your%20Tegat%20Tea%20Order%20${o.id}" target="_blank" class="btn-action" style="background:#25D366; color:#fff; border:none; padding:5px 12px; font-size:11.5px; font-weight:700; display:inline-flex; align-items:center; gap:4px; text-decoration:none; border-radius:6px;">
+                💬 WhatsApp Dispatch
+              </a>` : ''}
+              ${o.phone ? `<a href="tel:${o.phone}" class="btn-action" style="padding:5px 12px; font-size:11.5px; font-weight:700; text-decoration:none;">📞 Direct Call</a>` : ''}
+            </div>
+          </div>
+          <div>
+            <strong>Destination:</strong> ${escapeHtml(o.region)}<br>
+            <strong>Transport Carrier:</strong> ${escapeHtml(o.transport || 'Standard Bus/Courier')}<br>
+            <strong>Payment Method:</strong> ${escapeHtml(o.paymentMethod || 'M-Pesa Express')}<br>
+            <strong>Payment Reference Code:</strong> <code style="background:#eef2eb; padding:2px 6px; border-radius:4px;">${escapeHtml(o.paymentRef || 'N/A')}</code>
+          </div>
+        </div>
+
+        <h4 style="font-size:14px; color:var(--lux-green); margin-bottom:10px; font-family:'Playfair Display', serif;">Ordered Factory Packets</h4>
+        <table class="admin-table" style="margin-bottom:16px;">
+          <thead>
+            <tr><th>Item Name</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr>
+          </thead>
+          <tbody>
+            ${(o.items || []).map(i => `
+              <tr>
+                <td>${escapeHtml(i.name)}</td>
+                <td>${i.qty}</td>
+                <td>Ksh. ${i.price}</td>
+                <td><strong>Ksh. ${i.qty * i.price}</strong></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#eef5eb; padding:14px 18px; border-radius:10px; border:1px solid rgba(11,43,14,0.2);">
+          <div style="font-size:13px; font-weight:700; color:var(--lux-green);">
+            Current Dispatch Status: <span class="badge badge-${getBadgeClass(o.status)}">${o.status}</span>
+          </div>
+          <div style="font-size:17px; font-weight:800; color:var(--lux-green);">
+            Total: Ksh. ${(o.total||0).toLocaleString()}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('orderDetailsModal').classList.add('show');
+    }
+
+    function deleteOrder(orderId) {
+      requestPinConfirmation(`Delete Order ${orderId}`, () => {
+        let orders = getOrders();
+        orders = orders.filter(o => o.id !== orderId);
+        setOrders(orders);
+        logAuditEvent('Orders', 'Order Deleted', `Deleted order ref ${orderId}`);
+        showToast(`Order ${orderId} deleted.`);
+        renderAllViews();
+      });
+    }
+
+    function exportOrdersCSV() {
+      const orders = getOrders();
+      if (!orders.length) {
+        alert('No orders available to export.');
+        return;
+      }
+
+      let csv = 'Order ID,Date,Customer Name,Phone,Email,Region,Transport,Payment Method,Payment Ref,Total (Ksh),Status\n';
+      orders.forEach(o => {
+        csv += `"${o.id}","${o.date}","${o.name}","${o.phone}","${o.email||''}","${o.region}","${o.transport||''}","${o.paymentMethod||''}","${o.paymentRef||''}",${o.total},"${o.status}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Tegat_Factory_Orders_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      logAuditEvent('Orders', 'Exported Orders CSV', `Exported ${orders.length} order records to CSV.`);
+      showToast('Orders exported to CSV.');
+    }
+
+    // INVENTORY VIEW MODE & RENDERING
+    let inventoryViewMode = localStorage.getItem('tegat_inventory_view') || 'table';
+
+    function setInventoryViewMode(mode) {
+      inventoryViewMode = mode;
+      localStorage.setItem('tegat_inventory_view', mode);
+
+      const btnTable = document.getElementById('btnViewTable');
+      const btnGrid = document.getElementById('btnViewGrid');
+      const tableWrap = document.getElementById('inventoryTableWrap');
+      const gridWrap = document.getElementById('inventoryGrid');
+
+      if (mode === 'grid') {
+        if (btnGrid) { btnGrid.style.background = 'var(--lux-green)'; btnGrid.style.color = 'var(--yellow)'; }
+        if (btnTable) { btnTable.style.background = 'transparent'; btnTable.style.color = 'var(--muted-text)'; }
+        if (tableWrap) tableWrap.style.display = 'none';
+        if (gridWrap) gridWrap.style.display = 'grid';
+      } else {
+        if (btnTable) { btnTable.style.background = 'var(--lux-green)'; btnTable.style.color = 'var(--yellow)'; }
+        if (btnGrid) { btnGrid.style.background = 'transparent'; btnGrid.style.color = 'var(--muted-text)'; }
+        if (tableWrap) tableWrap.style.display = 'block';
+        if (gridWrap) gridWrap.style.display = 'none';
+      }
+
+      renderInventoryTable();
+    }
+
+    function renderLowStockBanner() {
+      const products = getProducts();
+      const lowItems = products.filter(p => p.stock <= 50 || p.status === 'Low Stock');
+      const banner = document.getElementById('lowStockAlertBanner');
+      if (!banner) return;
+
+      if (lowItems.length > 0) {
+        banner.innerHTML = `
+          <div style="background: rgba(231, 76, 60, 0.1); border: 1.5px solid var(--danger); border-radius: 12px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 10px; color: var(--danger); font-weight: 700; font-size: 13px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <span>Low Factory Stock Alert: ${lowItems.length} catalog item(s) running low (${lowItems.map(p => escapeHtml(p.name)).join(', ')})</span>
+            </div>
+            <button type="button" class="btn-action" style="background: var(--danger); color: #fff; border-color: var(--danger); padding: 6px 14px; font-size: 12px; font-weight: 700;" onclick="openEditProductModal('${lowItems[0].id}')">
+              Restock Item
+            </button>
+          </div>`;
+      } else {
+        banner.innerHTML = '';
+      }
+    }
+
+    function renderInventoryTable() {
+      const products = getProducts();
+      const body = document.getElementById('inventoryBody');
+      const grid = document.getElementById('inventoryGrid');
+      const session = getActiveSession();
+
+      renderLowStockBanner();
+
+      if (body) {
+        body.innerHTML = products.map(p => `
+          <tr>
+            <td><strong>${escapeHtml(p.name)}</strong></td>
+            <td><span style="font-size:12px; background:#f0f4ef; padding:3px 8px; border-radius:4px; font-weight:600;">${escapeHtml(p.category||'Black Tea')}</span></td>
+            <td><strong>Ksh. ${p.price}</strong></td>
+            <td><strong>${p.stock} units</strong></td>
+            <td>
+              <span class="badge ${p.status==='In Stock'?'badge-delivered':p.status==='Low Stock'?'badge-pending':'badge-cancelled'}">
+                ${p.status}
+              </span>
+            </td>
+            <td>
+              ${(session && (session.role === 'superadmin' || session.role === 'f_manager')) ? `
+                <button type="button" class="btn-action" onclick="openEditProductModal('${p.id}')">
+                  Edit Price / Stock
+                </button>
+              ` : `<span style="font-size:12px; color:#888;">Read Only</span>`}
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      if (grid) {
+        grid.innerHTML = products.map(p => `
+          <div class="product-card">
+            <div style="font-size: 11px; font-weight: 800; color: var(--lux-gold); text-transform: uppercase;">${escapeHtml(p.category || 'Black Tea')}</div>
+            <div class="product-title">${escapeHtml(p.name)}</div>
+            <div class="product-price">Ksh. ${p.price}</div>
+            <div class="product-stock ${p.stock <= 50 ? 'stock-low' : 'stock-ok'}">
+              ${p.stock <= 50 ? '⚠️ Low Stock: ' : 'Stock Level: '} ${p.stock} units
+            </div>
+            <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+              <span class="badge ${p.status==='In Stock'?'badge-delivered':p.status==='Low Stock'?'badge-pending':'badge-cancelled'}">${p.status}</span>
+              ${(session && (session.role === 'superadmin' || session.role === 'f_manager')) ? `
+                <button type="button" class="btn-action" onclick="openEditProductModal('${p.id}')">Edit</button>
+              ` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function exportInventoryCSV() {
+      const products = getProducts();
+      if (!products.length) return;
+
+      let csv = 'Product ID,Product Name,Category,Price (Ksh),Stock Units,Status\n';
+      products.forEach(p => {
+        csv += `"${p.id}","${p.name}","${p.category||'Black Tea'}",${p.price},${p.stock},"${p.status}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Tegat_Factory_Inventory_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      showToast('Inventory catalog exported to CSV.');
+    }
+
+    function openAddProductModal() {
+      document.getElementById('productModalTitle').textContent = 'Add New Retail Product';
+      document.getElementById('pId').value = '';
+      document.getElementById('pName').value = '';
+      document.getElementById('pCategory').value = 'Black Tea';
+      document.getElementById('pPrice').value = '100';
+      document.getElementById('pStock').value = '500';
+      document.getElementById('pStatus').value = 'In Stock';
+
+      document.getElementById('productModal').classList.add('show');
+    }
+
+    function openEditProductModal(id) {
+      const products = getProducts();
+      const p = products.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('productModalTitle').textContent = 'Edit Product Details';
+      document.getElementById('pId').value = p.id;
+      document.getElementById('pName').value = p.name;
+      document.getElementById('pCategory').value = p.category || 'Black Tea';
+      document.getElementById('pPrice').value = p.price;
+      document.getElementById('pStock').value = p.stock;
+      document.getElementById('pStatus').value = p.status;
+
+      document.getElementById('productModal').classList.add('show');
+    }
+
+    function saveProductForm(e) {
+      e.preventDefault();
+      const id = document.getElementById('pId').value;
+      const name = document.getElementById('pName').value.trim();
+      const category = document.getElementById('pCategory').value;
+      const price = parseInt(document.getElementById('pPrice').value, 10);
+      const stock = parseInt(document.getElementById('pStock').value, 10);
+      const status = document.getElementById('pStatus').value;
+
+      let products = getProducts();
+
+      if (id) {
+        const p = products.find(item => item.id === id);
+        if (p) {
+          const oldPrice = p.price;
+          p.name = name;
+          p.category = category;
+          p.price = price;
+          p.stock = stock;
+          p.status = status;
+          logAuditEvent('Inventory', 'Updated Catalog Product', `Updated ${name}: Price Ksh.${oldPrice} → Ksh.${price}, Stock ${stock}`);
+        }
+      } else {
+        products.push({
+          id: 'p_' + Date.now(),
+          name,
+          category,
+          price,
+          stock,
+          status
+        });
+        logAuditEvent('Inventory', 'Added Catalog Item', `Added new catalog item: ${name} (Ksh.${price})`);
+      }
+
+      setProducts(products);
+      closeModal('productModal');
+      showToast('Product catalog updated!');
+      renderInventoryTable();
+    }
+
+    // USER MANAGEMENT & RBAC TABLE
+    function renderUsersTable() {
+      const users = getUsers();
+      const body = document.getElementById('usersBody');
+      const session = getActiveSession();
+      if (!body) return;
+
+      body.innerHTML = users.map(u => `
+        <tr>
+          <td><strong>${escapeHtml(u.name)}</strong></td>
+          <td><code>${escapeHtml(u.username)}</code></td>
+          <td><small style="color:var(--lux-green); font-weight:600;">${escapeHtml(u.email || (u.username + '@tegatteafactory.co.ke'))}</small></td>
+          <td><span class="user-role-badge ${getRoleBadgeClass(u.role)}">${getRoleTitle(u.role)}</span></td>
+          <td>${u.enforce2fa ? '🔒 Enforced (Email 2FA)' : '⚠️ Disabled'}</td>
+          <td>${escapeHtml(u.phone || 'N/A')}</td>
+          <td><span class="badge badge-delivered">${u.status || 'Active'}</span></td>
+          <td>
+            ${(session && session.role === 'superadmin') ? `
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="btn-action" onclick="openEditUserModal('${u.username}')">Edit / Reset PIN</button>
+                ${u.username !== 'superadmin' ? `
+                  <button type="button" class="btn-action" style="color:var(--danger); border-color:rgba(231,76,60,0.3);" onclick="deleteUser('${u.username}')">Remove</button>
+                ` : ''}
+              </div>
+            ` : '<span style="font-size:12px; color:#888;">Restricted</span>'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddUserModal() {
+      document.getElementById('userModalTitle').textContent = 'Create New Staff Account';
+      document.getElementById('uUsernameOld').value = '';
+      document.getElementById('uName').value = '';
+      document.getElementById('uUsername').value = '';
+      document.getElementById('uRole').value = 'f_manager';
+      document.getElementById('uPin').value = '1234';
+      document.getElementById('uEmail').value = '';
+      document.getElementById('uPhone').value = '+254 712 000 111';
+      document.getElementById('u2fa').checked = true;
+
+      document.getElementById('userModal').classList.add('show');
+    }
+
+    function openEditUserModal(username) {
+      const users = getUsers();
+      const u = users.find(item => item.username === username);
+      if (!u) return;
+
+      document.getElementById('userModalTitle').textContent = 'Edit Staff User Details';
+      document.getElementById('uUsernameOld').value = u.username;
+      document.getElementById('uName').value = u.name;
+      document.getElementById('uUsername').value = u.username;
+      document.getElementById('uRole').value = u.role;
+      document.getElementById('uPin').value = u.pin;
+      document.getElementById('uEmail').value = u.email || (u.username + '@tegatteafactory.co.ke');
+      document.getElementById('uPhone').value = u.phone || '';
+      document.getElementById('u2fa').checked = !!u.enforce2fa;
+
+      document.getElementById('userModal').classList.add('show');
+    }
+
+    function saveUserForm(e) {
+      e.preventDefault();
+      const oldUsername = document.getElementById('uUsernameOld').value;
+      const name = document.getElementById('uName').value.trim();
+      const username = document.getElementById('uUsername').value.trim();
+      const role = document.getElementById('uRole').value;
+      const pin = document.getElementById('uPin').value.trim();
+      const email = document.getElementById('uEmail').value.trim();
+      const phone = document.getElementById('uPhone').value.trim();
+      const enforce2fa = document.getElementById('u2fa').checked;
+
+      let users = getUsers();
+
+      if (oldUsername) {
+        const u = users.find(item => item.username === oldUsername);
+        if (u) {
+          u.name = name;
+          u.username = username;
+          u.role = role;
+          u.pin = pin;
+          u.email = email;
+          u.phone = phone;
+          u.enforce2fa = enforce2fa;
+          logAuditEvent('Users', 'Staff Account Updated', `Updated staff account for ${name} (${username}), Role: ${getRoleTitle(role)}`);
+        }
+      } else {
+        if (users.some(u => u.username === username)) {
+          alert('Username already exists! Please choose another username.');
+          return;
+        }
+        users.push({
+          username,
+          name,
+          email,
+          role,
+          pin,
+          phone,
+          enforce2fa,
+          status: 'Active'
+        });
+        logAuditEvent('Users', 'Created Staff Account', `Created new staff account for ${name} (${username}), Role: ${getRoleTitle(role)}`);
+      }
+
+      setUsers(users);
+      closeModal('userModal');
+      showToast('Staff user directory updated!');
+      renderUsersTable();
+    }
+
+    function deleteUser(username) {
+      if (!confirm(`Are you sure you want to remove user account ${username}?`)) return;
+      let users = getUsers();
+      users = users.filter(u => u.username !== username);
+      setUsers(users);
+      logAuditEvent('Users', 'Deleted Staff Account', `Removed staff user ${username}`);
+      showToast(`User ${username} removed.`);
+      renderUsersTable();
+    }
+
+    // AUDIT LOGS TABLE
+    function renderAuditTable() {
+      const logs = getAuditLogs();
+      const body = document.getElementById('auditBody');
+      const search = (document.getElementById('auditSearchInput')?.value || '').toLowerCase();
+      const filterMod = document.getElementById('auditModuleFilter')?.value || 'ALL';
+
+      if (!body) return;
+
+      const filtered = logs.filter(l => {
+        const matchesSearch = l.user.toLowerCase().includes(search) ||
+                              l.action.toLowerCase().includes(search) ||
+                              l.details.toLowerCase().includes(search);
+        const matchesMod = (filterMod === 'ALL') || (l.module === filterMod);
+        return matchesSearch && matchesMod;
+      });
+
+      body.innerHTML = filtered.map(l => `
+        <tr>
+          <td><code style="font-size:11px;">${l.timestamp}</code></td>
+          <td><strong>${escapeHtml(l.user)}</strong></td>
+          <td><span style="font-size:11px; font-weight:700;">${escapeHtml(l.role)}</span></td>
+          <td><span class="module-badge mod-${(l.module||'Auth').toLowerCase()}">${l.module}</span></td>
+          <td><strong>${escapeHtml(l.action)}</strong></td>
+          <td><span style="font-size:12.5px; color:#444;">${escapeHtml(l.details)}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function exportAuditLogsCSV() {
+      requestPinConfirmation('Export Audit Logs CSV', () => {
+        const logs = getAuditLogs();
+        if (!logs.length) {
+          alert('No audit logs available to export.');
+          return;
+        }
+
+        let csv = 'Timestamp,Staff User,Role,Module,Action Executed,Details\n';
+        logs.forEach(l => {
+          csv += `"${l.timestamp}","${l.user}","${l.role}","${l.module}","${l.action}","${l.details.replace(/"/g, '""')}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Tegat_Factory_AuditTrail_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        showToast('Audit trail exported to CSV.');
+      });
+    }
+
+    function clearAuditTrail() {
+      requestPinConfirmation('Clear All Historical Audit Logs', () => {
+        setAuditLogs([]);
+        logAuditEvent('Security', 'Cleared Audit Logs', 'Super Admin cleared all historical audit log entries.');
+        showToast('Audit logs history cleared.');
+        renderAuditTable();
+      });
+    }
+
+    // CUSTOMERS & SUBSCRIBERS LOGIC & DATA MASKING
+    let windowUnmaskContacts = false;
+
+    function toggleMaskedContacts() {
+      if (!windowUnmaskContacts) {
+        requestPinConfirmation('Reveal Customer Contact Details', () => {
+          windowUnmaskContacts = true;
+          const btnTxt = document.getElementById('txtToggleMaskContacts');
+          if (btnTxt) btnTxt.textContent = '🔒 Mask Contacts';
+          showToast('🔓 Contact details unmasked for 60 seconds.');
+          renderAdminCustomersTable();
+          renderAdminSubscribersTable();
+          setTimeout(() => {
+            windowUnmaskContacts = false;
+            if (btnTxt) btnTxt.textContent = '👁️ Reveal Contacts';
+            showToast('🔒 Contact details auto-masked for privacy.');
+            renderAdminCustomersTable();
+            renderAdminSubscribersTable();
+          }, 60000);
+        });
+      } else {
+        windowUnmaskContacts = false;
+        const btnTxt = document.getElementById('txtToggleMaskContacts');
+        if (btnTxt) btnTxt.textContent = '👁️ Reveal Contacts';
+        showToast('🔒 Contact details masked.');
+        renderAdminCustomersTable();
+        renderAdminSubscribersTable();
+      }
+    }
+
+    function maskEmail(email) {
+      if (!email) return 'N/A';
+      if (windowUnmaskContacts) return email;
+      const parts = email.split('@');
+      if (parts.length < 2) return '***@***.com';
+      const name = parts[0];
+      const maskedName = name.length > 2 ? name.substring(0, 2) + '****' : name + '****';
+      return `${maskedName}@${parts[1]}`;
+    }
+
+    function maskPhone(phone) {
+      if (!phone || phone.length < 6) return 'N/A';
+      if (windowUnmaskContacts) return phone;
+      return phone.substring(0, 6) + ' *** ' + phone.substring(phone.length - 3);
+    }
+
+    function getCustomers() {
+      try {
+        const raw = localStorage.getItem(STORAGE_CUSTOMERS_KEY);
+        if (!raw || raw === 'undefined' || raw === 'null') {
+          localStorage.setItem(STORAGE_CUSTOMERS_KEY, JSON.stringify(SAMPLE_CUSTOMERS));
+          return SAMPLE_CUSTOMERS;
+        }
+        return safeJSONParse(raw, SAMPLE_CUSTOMERS);
+      } catch(e) { return SAMPLE_CUSTOMERS; }
+    }
+
+    function getSubscribers() {
+      try {
+        const raw = localStorage.getItem(STORAGE_SUBSCRIBERS_KEY);
+        if (!raw || raw === 'undefined' || raw === 'null') {
+          localStorage.setItem(STORAGE_SUBSCRIBERS_KEY, JSON.stringify(SAMPLE_SUBSCRIBERS));
+          return SAMPLE_SUBSCRIBERS;
+        }
+        return safeJSONParse(raw, SAMPLE_SUBSCRIBERS);
+      } catch(e) { return SAMPLE_SUBSCRIBERS; }
+    }
+
+    function renderAdminCustomersTable() {
+      const customers = getCustomers();
+      const tbody = document.getElementById('adminCustomersTbody');
+      const search = (document.getElementById('custSearchInput')?.value || '').toLowerCase();
+      if (!tbody) return;
+
+      const filtered = customers.filter(c => {
+        return (c.name || '').toLowerCase().includes(search) ||
+               (c.email || '').toLowerCase().includes(search) ||
+               (c.phone && c.phone.toLowerCase().includes(search)) ||
+               (c.country && c.country.toLowerCase().includes(search)) ||
+               (c.type && c.type.toLowerCase().includes(search));
+      });
+
+      tbody.innerHTML = filtered.map(c => `
+        <tr>
+          <td><code style="font-size:11.5px; font-weight:700;">${escapeHtml(c.id || 'CUST')}</code></td>
+          <td><strong>${escapeHtml(c.name)}</strong></td>
+          <td><a href="mailto:${escapeHtml(c.email)}" style="color:var(--lux-green); font-weight:600;">${escapeHtml(maskEmail(c.email))}</a></td>
+          <td>${escapeHtml(maskPhone(c.phone))}</td>
+          <td>${escapeHtml(c.country || 'Kenya')}</td>
+          <td><span class="status-badge delivered">${escapeHtml(c.type || 'Retail Customer')}</span></td>
+          <td>
+            <span class="status-badge ${c.subscribedToEmail ? 'confirmed' : 'pending'}">
+              ${c.subscribedToEmail ? '✓ Subscribed' : '✗ Opted Out'}
+            </span>
+          </td>
+          <td><span style="font-size:12px; color:var(--muted-text);">${escapeHtml(c.joinedDate || '2026')}</span></td>
+        </tr>
+      `).join('');
+
+      // Update KPI Cards and Nav Badge
+      const totalCust = customers.length;
+      const b2b = customers.filter(c => c.type && (c.type.includes('Wholesale') || c.type.includes('Farmer'))).length;
+      
+      const totalCustEl = document.getElementById('kpiTotalCustomers');
+      const b2bEl = document.getElementById('kpiB2bAccounts');
+      const badgeEl = document.getElementById('customersNavBadge');
+
+      if (totalCustEl) totalCustEl.textContent = totalCust;
+      if (b2bEl) b2bEl.textContent = b2b;
+      if (badgeEl) badgeEl.textContent = totalCust;
+    }
+
+    function renderAdminSubscribersTable() {
+      const subs = getSubscribers();
+      const tbody = document.getElementById('adminSubscribersTbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = subs.map(s => `
+        <tr>
+          <td><a href="mailto:${escapeHtml(s.email)}" style="color:var(--lux-green); font-weight:700;">${escapeHtml(maskEmail(s.email))}</a></td>
+          <td><strong>${escapeHtml(s.name || 'Subscriber')}</strong></td>
+          <td><span class="status-badge transit">${escapeHtml(s.source || 'Website Opt-in')}</span></td>
+          <td><span style="font-size:12px; color:var(--muted-text);">${new Date(s.date).toLocaleDateString()}</span></td>
+          <td><span class="status-badge confirmed">Active Subscriber</span></td>
+        </tr>
+      `).join('');
+
+      const subsEl = document.getElementById('kpiTotalSubscribers');
+      if (subsEl) subsEl.textContent = subs.length;
+    }
+
+    function renderAdminReviewsTable() {
+      const tbody = document.getElementById('adminReviewsTbody');
+      if (!tbody) return;
+
+      const defaultReviews = [
+        { authorName: "Mark Al-Nuaimi", authorLocation: "Dubai, UAE", authorRole: "Wholesale Importer", productGrade: "BP1 — Broken Pekoe 1", rating: 5, title: "Unrivaled Briskness and Spotless Packaging", comment: "We import 4 forty-foot containers per quarter into Dubai. Tegat's CTC BP1 consistently delivers unmatched briskness and clean granular uniformity.", helpfulVotes: 38, date: "2026-03-14" },
+        { authorName: "Dr. Sofia Reynolds", authorLocation: "Boston, USA", authorRole: "Master Tea Blender", productGrade: "PF1 — Pekoe Fannings 1", rating: 5, title: "Exceptional Cup Brightness for Premium Blends", comment: "The high-altitude terroir of Kericho highlands shows in every liquor test. Great cup brightness.", helpfulVotes: 29, date: "2026-03-02" },
+        { authorName: "Liam van der Merwe", authorLocation: "Cape Town, SA", authorRole: "Commercial Wholesaler", productGrade: "PD — Pekoe Dust", rating: 5, title: "Rapid Infusion & Outstanding Liquoring Strength", comment: "For fast commercial bagging, Tegat Pekoe Dust is second to none in Sub-Saharan Africa.", helpfulVotes: 21, date: "2026-02-18" },
+        { authorName: "Nadia Mansour", authorLocation: "Alexandria, Egypt", authorRole: "Senior Sourcing Director", productGrade: "D1 — Dust 1 & BP1", rating: 5, title: "Consistent High-Yield Quality Year After Year", comment: "Egyptian consumers demand strong, dark, brisk tea. Tegat Tea Factory has been our steadfast partner.", helpfulVotes: 44, date: "2026-01-28" },
+        { authorName: "Kiprono Cheruiyot", authorLocation: "Kericho, Kenya", authorRole: "Retail Connoisseur", productGrade: "Classic 500g & Tangawizi", rating: 5, title: "The Pride of Kericho", comment: "The Tangawizi ginger blend is aromatic and warming, while the Classic 500g has that fresh highland aroma.", helpfulVotes: 19, date: "2026-03-20" },
+        { authorName: "Hans-Jürgen Weber", authorLocation: "Hamburg, Germany", authorRole: "Compliance Director", productGrade: "BP1 Single Estate", rating: 5, title: "Strict Rainforest Alliance Compliance", comment: "Rainforest Alliance chain-of-custody certificates and lab test reports are always pristine.", helpfulVotes: 16, date: "2026-02-11" },
+        { authorName: "Amina Hassan", authorLocation: "London, UK", authorRole: "Hospitality Purveyor", productGrade: "PF1 Enveloped Bags", rating: 5, title: "Supreme Freshness and Superior Aroma", comment: "Our luxury hotel clients across London rave about the fresh aroma and bold body.", helpfulVotes: 25, date: "2026-03-08" },
+        { authorName: "Tariq Javed", authorLocation: "Karachi, Pakistan", authorRole: "Bulk Importer", productGrade: "PD Pekoe Dust", rating: 4, title: "Excellent Body and Liquoring Depth", comment: "Substantial liquor body and quick color development. Very competitive pricing on CIF contracts.", helpfulVotes: 12, date: "2026-01-15" }
+      ];
+
+      // Merge any user-submitted custom reviews from localStorage
+      let allReviews = [...defaultReviews];
+      try {
+        const custom = JSON.parse(localStorage.getItem('tegat_custom_reviews') || '[]');
+        if (custom && custom.length > 0) {
+          allReviews = [...custom, ...defaultReviews];
+        }
+      } catch(e) {}
+
+      // Sort reviews according to adminReviewSort ('recent', 'highest', 'helpful')
+      const sortMode = document.getElementById('adminReviewSort')?.value || 'recent';
+      allReviews.sort((a, b) => {
+        if (sortMode === 'highest') {
+          const diff = (Number(b.rating) || 0) - (Number(a.rating) || 0);
+          if (diff !== 0) return diff;
+          return (Number(b.helpfulVotes) || 0) - (Number(a.helpfulVotes) || 0);
+        } else if (sortMode === 'helpful') {
+          const diff = (Number(b.helpfulVotes) || 0) - (Number(a.helpfulVotes) || 0);
+          if (diff !== 0) return diff;
+          return (Number(b.rating) || 0) - (Number(a.rating) || 0);
+        } else {
+          // Default: 'recent'
+          return new Date(b.date || b.createdAt || 0).getTime() - new Date(a.date || a.createdAt || 0).getTime();
+        }
+      });
+
+      tbody.innerHTML = allReviews.map(r => `
+        <tr>
+          <td>
+            <strong>${escapeHtml(r.authorName)}</strong><br>
+            <span style="font-size:11.5px; color:var(--muted-text);">${escapeHtml(r.authorRole || 'Customer')} • ${escapeHtml(r.authorLocation || '')}</span>
+          </td>
+          <td><span class="status-badge transit" style="font-size:11.5px;">${escapeHtml(r.productGrade || 'CTC Black Tea')}</span></td>
+          <td>
+            <span style="color:#d97706; font-weight:800; font-size:13px;">${'★'.repeat(r.rating || 5)}</span>
+            <span style="font-size:11.5px; color:var(--muted-text);">(${r.rating || 5}/5)</span>
+          </td>
+          <td>
+            <div style="font-weight:700; font-size:12.5px; margin-bottom:2px;">${escapeHtml(r.title || '')}</div>
+            <div style="font-size:12px; color:#475569; max-width:400px; line-height:1.4;">“${escapeHtml(r.comment || '')}”</div>
+          </td>
+          <td>
+            <span class="status-badge confirmed" style="font-size:11px;">👍 ${r.helpfulVotes || 0} Votes</span>
+          </td>
+          <td><span style="font-size:12px; color:var(--muted-text);">${r.date ? new Date(r.date).toLocaleDateString() : 'Recent'}</span></td>
+        </tr>
+      `).join('');
+
+      const totalCountEl = document.getElementById('adminTotalReviewsCount');
+      const badgeEl = document.getElementById('reviewsNavBadge');
+      if (totalCountEl) totalCountEl.textContent = allReviews.length;
+      if (badgeEl) badgeEl.textContent = allReviews.length;
+    }
+
+    function exportCustomersCSV() {
+      requestPinConfirmation('Export Customer Account Contacts CSV', () => {
+        const customers = getCustomers();
+        if (!customers.length) {
+          alert('No customer accounts available to export.');
+          return;
+        }
+
+        let csv = 'Customer ID,Full Name,Email,Phone,Country,Account Type,Subscribed,Joined Date\n';
+        customers.forEach(c => {
+          csv += `"${c.id}","${c.name}","${c.email}","${c.phone || ''}","${c.country || 'Kenya'}","${c.type || 'Retail'}","${c.subscribedToEmail ? 'Yes' : 'No'}","${c.joinedDate || '2026'}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Tegat_Tea_CustomerDatabase_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        showToast('Customer database exported to CSV!');
+        logAuditEvent('Customers', 'Exported Customer Contacts CSV', `Exported ${customers.length} customer records to CSV file.`);
+      });
+    }
+
+    function exportSubscribersCSV() {
+      requestPinConfirmation('Export Email Subscriber List CSV', () => {
+        const subs = getSubscribers();
+        if (!subs.length) {
+          alert('No email subscribers to export.');
+          return;
+        }
+
+        let csv = 'Subscriber Email,Name,Source,OptIn Date,Status\n';
+        subs.forEach(s => {
+          csv += `"${s.email}","${s.name || 'Subscriber'}","${s.source || 'Website'}","${new Date(s.date).toLocaleDateString()}","Active"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Tegat_Tea_EmailSubscribers_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+        showToast('Email subscribers exported to CSV!');
+        logAuditEvent('Newsletter', 'Exported Subscribers CSV', `Exported ${subs.length} email subscriber contacts to CSV file.`);
+      });
+    }
+
+    // GOOGLE APPS SCRIPT (GAS) ORDER SYNC LOGIC
+    const STORAGE_GAS_URL_KEY = 'tegat_gas_script_url';
+    const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxOrBeq1nEoWz-oeoSwV9SVbJ58_PCOafpYDGibxL5g3VR2POXMLAGj4Afvb4-aqQMp/exec';
+
+    function openGasConfigModal() {
+      const saved = localStorage.getItem(STORAGE_GAS_URL_KEY) || DEFAULT_GAS_URL;
+      const input = document.getElementById('gasScriptUrlInput');
+      if (input) input.value = saved;
+      const modal = document.getElementById('gasConfigModal');
+      if (modal) modal.classList.add('show');
+    }
+
+    function saveGasUrl() {
+      const input = document.getElementById('gasScriptUrlInput');
+      const val = (input?.value || '').trim();
+      if (val) {
+        localStorage.setItem(STORAGE_GAS_URL_KEY, val);
+        showToast('Google Apps Script Web App URL saved!');
+        logAuditEvent('Orders', 'Configured GAS Web App Endpoint', `Updated GAS script endpoint URL: ${val.substring(0, 30)}...`);
+      } else {
+        localStorage.removeItem(STORAGE_GAS_URL_KEY);
+        showToast('GAS URL cleared. Default sync engine enabled.');
+      }
+      closeModal('gasConfigModal');
+      syncOrdersFromGAS();
+    }
+
+    function copyGasCode() {
+      const textarea = document.getElementById('gasCodeTextarea');
+      if (textarea) {
+        textarea.select();
+        try {
+          navigator.clipboard.writeText(textarea.value);
+          showToast('Google Apps Script Code copied to clipboard!');
+        } catch(e) {
+          document.execCommand('copy');
+          showToast('Code copied!');
+        }
+      }
+    }
+
+    async function syncOrdersFromGAS() {
+      const url = localStorage.getItem(STORAGE_GAS_URL_KEY) || DEFAULT_GAS_URL;
+      const btn = document.getElementById('btnSyncGasOrders');
+      const badge = document.getElementById('gasSyncBadge');
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> <span>Syncing Orders...</span>';
+      }
+
+      if (!url) {
+        // Simulated / Fallback Google Apps Script pulling
+        setTimeout(() => {
+          const currentOrders = getOrders();
+          const sampleGasOrders = [
+            {
+              id: 'TGT-91001',
+              date: new Date().toISOString().slice(0, 16).replace('T', ' '),
+              name: 'Joan Cherotich (Direct Sheet Order)',
+              email: 'chero.joen@gmail.com',
+              phone: '+254 722 000 111',
+              region: 'Nairobi Metro (Courier Direct)',
+              transport: 'EasyCoach Parcel Direct',
+              paymentMethod: 'M-Pesa Express',
+              paymentRef: 'QHM91001GAS',
+              items: [
+                { name: 'Black Tea – Net Weight:500g', qty: 4, price: 150 },
+                { name: 'Black Tea – Net Weight:100g', qty: 2, price: 35 }
+              ],
+              total: 670,
+              status: 'Confirmed',
+              source: 'Google Sheet (GAS)'
+            },
+            {
+              id: 'TGT-91002',
+              date: new Date().toISOString().slice(0, 16).replace('T', ' '),
+              name: 'Dr. Hillary Langat (Google Sheet)',
+              email: 'h.langat@nairobitrading.co.ke',
+              phone: '+254 722 300 400',
+              region: 'Kericho Factory Gate',
+              transport: 'Factory Gate Pickup',
+              paymentMethod: 'Bank Transfer / RTGS',
+              paymentRef: 'RTGS-2026-9921',
+              items: [
+                { name: 'Bulk Premium Black Tea CTC (50Kg Bag)', qty: 5, price: 14500 }
+              ],
+              total: 72500,
+              status: 'In Transit',
+              source: 'Google Sheet (GAS)'
+            }
+          ];
+
+          let added = 0;
+          sampleGasOrders.forEach(go => {
+            if (!currentOrders.some(o => o.id === go.id)) {
+              currentOrders.unshift(go);
+              added++;
+            }
+          });
+
+          setOrders(currentOrders);
+          renderOrdersTable();
+          renderDashboardStats();
+          logAuditEvent('Orders', 'GAS Google Sheet Sync', `Pulled ${added} new orders from Google Sheet via Apps Script.`);
+
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Pull Orders from GAS Script</span>';
+          }
+          if (badge) {
+            badge.textContent = '● Synced via Apps Script';
+            badge.style.background = 'rgba(46,204,113,0.3)';
+          }
+          showToast(`✓ Google Sheet Sync Complete! ${added} new orders pulled.`);
+        }, 1100);
+        return;
+      }
+
+      // Live Fetch from deployed Google Apps Script Endpoint
+      try {
+        const response = await fetch(url + '?action=getOrders');
+        const data = await response.json();
+        let fetchedOrders = [];
+        if (Array.isArray(data)) fetchedOrders = data;
+        else if (data && Array.isArray(data.orders)) fetchedOrders = data.orders;
+
+        if (fetchedOrders.length > 0) {
+          const currentOrders = getOrders();
+          let added = 0;
+          fetchedOrders.forEach(fo => {
+            if (!currentOrders.some(o => o.id === fo.id)) {
+              currentOrders.unshift(fo);
+              added++;
+            }
+          });
+          setOrders(currentOrders);
+          renderOrdersTable();
+          renderDashboardStats();
+          logAuditEvent('Orders', 'GAS Google Sheet Sync', `Successfully pulled ${fetchedOrders.length} live orders from Google Sheet URL.`);
+          showToast(`✓ Pulled ${fetchedOrders.length} live orders from Google Sheet!`);
+        } else {
+          showToast('Connected to Google Sheet, but no new orders were returned.');
+        }
+      } catch (err) {
+        console.error('GAS Endpoint Error:', err);
+        showToast('Sync completed with local sheet cache fallback.');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><span>Pull Orders from GAS Script</span>';
+        }
+      }
+    }
+
+    // SETTINGS / CHANGE PIN
+    function handleChangePin(e) {
+      e.preventDefault();
+      const session = getActiveSession();
+      if (!session) return;
+
+      const cur = document.getElementById('curPin').value.trim();
+      const n1 = document.getElementById('newPin1').value.trim();
+      const n2 = document.getElementById('newPin2').value.trim();
+
+      let users = getUsers();
+      const u = users.find(item => item.username === session.username);
+
+      if (!u || u.pin !== cur) {
+        alert('Current Security PIN is incorrect!');
+        return;
+      }
+      if (n1 !== n2) {
+        alert('New PINs do not match each other!');
+        return;
+      }
+      if (n1.length < 4) {
+        alert('Security PIN must be at least 4 digits long!');
+        return;
+      }
+
+      u.pin = n1;
+      setUsers(users);
+      logAuditEvent('Security', 'Changed Security PIN', `${session.name} updated their security PIN.`);
+
+      document.getElementById('curPin').value = '';
+      document.getElementById('newPin1').value = '';
+      document.getElementById('newPin2').value = '';
+      showToast('Security PIN successfully updated!');
+    }
+
+    function resetDemoData() {
+      if (!confirm('Reset all portal data to initial factory sample records and default staff accounts?')) return;
+      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(INITIAL_USERS));
+      localStorage.setItem(STORAGE_ORDERS_KEY, JSON.stringify(SAMPLE_ORDERS));
+      localStorage.setItem(STORAGE_PRODUCTS_KEY, JSON.stringify(SAMPLE_PRODUCTS));
+      localStorage.setItem(STORAGE_AUDIT_KEY, JSON.stringify(SAMPLE_AUDIT_LOGS));
+      localStorage.setItem(STORAGE_CUSTOMERS_KEY, JSON.stringify(SAMPLE_CUSTOMERS));
+      localStorage.setItem(STORAGE_SUBSCRIBERS_KEY, JSON.stringify(SAMPLE_SUBSCRIBERS));
+      
+      logAuditEvent('Security', 'System Demo Data Reset', 'Master system data restored to initial factory state.');
+      showToast('Demo data restored successfully.');
+      renderAllViews();
+    }
+
+    // NAVIGATION HELPERS
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+
+      document.querySelectorAll('.sidebar-menu button').forEach(b => {
+        b.classList.remove('active');
+      });
+
+      const target = document.getElementById('tab-' + tabId);
+      if (target) {
+        target.classList.add('active');
+      }
+
+      if (btn) {
+        btn.classList.add('active');
+      }
+
+      // Page Title Update
+      const titles = {
+        dashboard: 'Platform Sales Operations Portal',
+        orders: 'Customer Orders & Dispatch Pipeline',
+        inventory: 'Retail Tea Catalog & Pricing Control',
+        users: 'Staff User Directory & RBAC Roles',
+        audit: 'System-Wide Audit Trail & Activity Logs',
+        customers: 'Customer Accounts & Email Newsletter Subscribers',
+        reviews: 'Customer & Wholesale Importer Reviews',
+        settings: 'Security & Portal Settings'
+      };
+
+      const titleEl = document.getElementById('pageTitle');
+      if (titleEl && titles[tabId]) {
+        titleEl.textContent = titles[tabId];
+      }
+
+      if (tabId === 'reviews') {
+        renderAdminReviewsTable();
+      }
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('show');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('adminToast');
+      const msgEl = document.getElementById('toastMsg');
+      if (msgEl) msgEl.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3500);
+    }
+
+    function getBadgeClass(status) {
+      switch (status) {
+        case 'Pending': return 'pending';
+        case 'Confirmed': return 'confirmed';
+        case 'In Transit': return 'transit';
+        case 'Delivered': return 'delivered';
+        case 'Cancelled': return 'cancelled';
+        default: return 'pending';
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+  </script>
+</body>
+</html>

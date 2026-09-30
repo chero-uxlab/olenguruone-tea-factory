@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+      (function(){var o=JSON.parse;JSON.parse=function(t,r){if(t===undefined||t===null||t==='undefined'||t==='null'||t===''||t==='NaN')return null;try{return o(t,r)}catch(e){if(typeof t==='string'&&(t.indexOf('undefined')!==-1||t.indexOf('null')!==-1||t.trim()===''))return null;throw e}};try{if(typeof localStorage!=='undefined'){for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(k){var v=localStorage.getItem(k);if(v==='undefined'||v==='null'||v==='NaN')localStorage.removeItem(k)}}}}catch(e){}})();
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Checkout — Tegat Tea Factory</title>
+    <link rel="stylesheet" href="assets/cookies.css">
+    <link rel="stylesheet" href="assets/theme.css">
+    <link rel="stylesheet" href="./accessibility.css">
+    <script src="assets/theme.js"></script>
+    <script src="./accessibility.js" defer></script>
+    <script type="module" src="assets/cookies.js"></script>
+    <script type="module" src="assets/firebase-db.js"></script>
+    <style>
+        :root {
+            --brown: #123118;
+            --brown-deep: #0a2010;
+            --yellow: #f2c94c;
+            --yellow-soft: #f7dc6f;
+            --cream: #faf6ec;
+            --dark: #123118;
+            --ink: #2b2418;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --info: #3498db;
+        }
+
+        * { box-sizing: border-box; }
+        input, textarea, select { pointer-events: auto !important; user-select: text !important; -webkit-user-select: text !important; cursor: text !important; }
+        input[type="checkbox"], input[type="radio"], input[type="button"], input[type="submit"], input[type="file"] { cursor: pointer !important; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', Arial, Helvetica, sans-serif;
+            background: var(--cream);
+            color: var(--ink);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVIGATION --- */
+        .navbar{
+          box-shadow:0 4px 16px rgba(0,0,0,0.18);
+          background:linear-gradient(120deg, var(--brown-deep), var(--brown));
+          padding:12px 24px;
+          display:flex;
+          justify-content:flex-start;
+          align-items:center;
+          color:var(--yellow-soft);
+          gap:20px;
+          position:sticky;
+          top:0;
+          z-index:1000;
+        }
+
+        .nav-left{
+          display:flex;
+          align-items:center;
+          gap:20px;
+          flex:1;
+          justify-content:flex-start;
+        }
+
+        .logo-area{
+          display:flex;
+          align-items:center;
+          gap:10px;
+          font-family:'Fraunces', 'Segoe UI', serif;
+          font-size:20px;
+          font-weight:600;
+          letter-spacing:0.3px;
+          color:var(--yellow-soft);
+          text-decoration:none;
+          flex-shrink:0;
+        }
+
+        .logo-area img{
+          height:40px;
+          width:auto;
+          max-width:80px;
+          object-fit:contain;
+          background:white;
+          border-radius:6px;
+          padding:3px;
+        }
+
+        .right-side{
+          display:flex;
+          align-items:center;
+          gap:16px;
+          margin-left:auto;
+        }
+
+        .nav-links{
+          display:flex;
+          align-items:center;
+          gap:10px;
+          justify-content:flex-start;
+          transition:0.3s ease-in-out;
+        }
+
+        .navbar a{
+          transition:0.25s ease-in-out;
+          color:var(--yellow-soft);
+          text-decoration:none;
+          padding:8px 14px;
+          border-radius:8px;
+          font-weight:600;
+          font-size:13.5px;
+          letter-spacing:0.3px;
+          text-transform:uppercase;
+          display:inline-flex;
+          align-items:center;
+          gap:8px;
+          white-space:nowrap;
+        }
+
+        .navbar a svg{
+          flex-shrink:0;
+        }
+
+        .navbar a:hover{
+          background:var(--yellow);
+          color:var(--brown);
+        }
+
+        .cart-container{
+          display:flex;
+          align-items:center;
+        }
+
+        .cart-icon{
+          position:relative;
+          cursor:pointer;
+          padding:8px;
+          border-radius:8px;
+          transition:0.2s;
+          text-decoration:none;
+        }
+
+        .cart-icon:hover{
+          background:rgba(255,255,255,0.1);
+        }
+
+        .cart-wrapper{
+          position:relative;
+          display:inline-block;
+        }
+
+        .cart-count{
+          position:absolute;
+          top:-8px;
+          right:-10px;
+          background:var(--accent, #e65100);
+          color:white;
+          border-radius:50%;
+          padding:2px 6px;
+          font-size:11px;
+          font-weight:bold;
+        }
+
+        .menu-toggle{ width:38px; height:38px; cursor:pointer; display:none; flex-direction:column; justify-content:center; align-items:center; padding:6px; background:rgba(255,255,255,0.08); border-radius:8px; border:1px solid var(--yellow); }
+
+        @keyframes slideDown {
+          from { opacity:0; transform:translateY(-10px); }
+          to { opacity:1; transform:translateY(0); }
+        }
+
+        @media(max-width:980px){
+          .nav-left{ flex:1; }
+          .navbar{ padding:10px 16px; justify-content:space-between; position:relative; }
+          .logo-area{ font-size:16px; gap:8px; }
+          .logo-area img{ height:36px; max-width:65px; }
+          .menu-toggle{ display:flex; align-items:center; justify-content:center; z-index:1001; }
+          .nav-links{
+            display:none;
+            flex-direction:column;
+            position:absolute;
+            top:calc(100% + 6px);
+            right:12px;
+            left:auto;
+            width:min(280px, 92vw);
+            background:linear-gradient(145deg, #0b2b0e 0%, #154319 100%);
+            border:2px solid var(--yellow);
+            border-radius:16px;
+            padding:12px;
+            box-shadow:0 12px 30px rgba(0,0,0,0.4);
+            z-index:1050;
+          }
+          .nav-links.show{ display:flex; animation: slideDown 0.25s ease-out; }
+          .nav-links a{ color:#ffffff !important; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,0.1); border-radius:8px; display:flex !important; align-items:center; gap:10px; font-weight:700; font-size:13.5px; text-transform:none; }
+          .nav-links a:last-child{ border-bottom:none; }
+          .nav-links a:hover{ background:var(--yellow) !important; color:#0b2b0e !important; }
+        }
+
+        /* --- PROGRESS BAR --- */
+        .progress-container {
+            width: 94%;
+            max-width: 1100px;
+            margin: 20px auto 0;
+        }
+
+        .progressbar {
+            counter-reset: step;
+            display: flex;
+            justify-content: space-between;
+            padding: 0;
+            margin: 0;
+        }
+
+        .progressbar li {
+            list-style: none;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            font-weight: 700;
+            color: var(--brown);
+            font-size: 13px;
+            opacity: 0.6;
+        }
+
+        .progressbar li.active { opacity: 1; }
+
+        .progressbar li:before {
+            content: counter(step);
+            counter-increment: step;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 50%;
+            display: block;
+            margin: 0 auto 8px;
+            border: 2px solid var(--brown);
+            background: #fff;
+            z-index: 2;
+            position: relative;
+        }
+
+        .progressbar li.active:before {
+            background: var(--yellow);
+            border-color: var(--brown);
+        }
+
+        .progressbar li:after {
+            content: "";
+            position: absolute;
+            height: 2px;
+            background: #ccc;
+            width: 100%;
+            top: 15px;
+            left: -50%;
+            z-index: 1;
+        }
+
+        .progressbar li:first-child:after { content: none; }
+        .progressbar li.active + li:after { background: var(--brown); }
+
+        /* --- MAIN LAYOUT --- */
+        .container {
+            width: 94%;
+            max-width: 1100px;
+            margin: 26px auto;
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 20px;
+            flex: 1;
+        }
+
+        @media(max-width:920px) { .container { grid-template-columns: 1fr; } }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            border-left: 6px solid var(--brown);
+            margin-bottom: 14px;
+          /* Apply this to your card containers */
+        }
+
+        .section-title h2 {
+            margin: 0 0 15px;
+            color: var(--brown);
+            font-size: 1.3rem;
+        }
+
+        .region-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: var(--cream);
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .region-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .region-btn.active {
+            background: var(--brown);
+            color: var(--yellow);
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: 700;
+            color: var(--brown);
+            font-size: 13px;
+        }
+
+        .input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1.5px solid rgba(11, 43, 14, 0.1);
+            background: var(--cream);
+            font-size: 14px;
+            outline: none;
+            margin-top: 5px;
+            transition: 0.2s;
+        }
+
+        .input:focus, select:focus {
+            border-color: var(--yellow);
+            background: #fff;
+        }
+
+        .error-message {
+            font-size: 11px;
+            color: var(--danger);
+            margin-top: 5px;
+            font-weight: bold;
+            display: none;
+        }
+
+        #getLocationBtn, #verifyGlobalBtn {
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 800;
+            width: 100%;
+            margin-top: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        #getLocationBtn { background: var(--brown); color: var(--yellow); }
+        #getLocationBtn:hover { background: var(--yellow); color:var(--brown);
+   }
+        
+        #verifyGlobalBtn { background: var(--brown); color: var(--yellow); }
+         #verifyGlobalBtn:hover { background: var(--yellow); color:var(--brown);
+       }
+
+        .qty-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            background: var(--brown);
+            color: var(--yellow);
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            background: var(--brown);
+            color: var(--yellow);
+            padding: 16px;
+            border: 0;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .confirm-btn:hover:not(:disabled) {
+            background:var(--yellow);
+             color: var(--brown);
+          }
+            
+        .confirm-btn:disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        /* --- MODAL --- */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            width: 92%;
+            max-width: 420px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+.footer { 
+  background: linear-gradient(120deg, var(--brown-deep), var(--brown)); 
+  color: #ffffff; 
+  padding: 48px 24px 24px 24px; 
+  margin-top: auto; 
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  border-top: 3px solid var(--yellow);
+}
+
+.footer-container { 
+  display: grid; 
+  grid-template-columns: 1.3fr 0.9fr 1fr 0.9fr; 
+  gap: 32px; 
+  max-width: 1140px; 
+  margin: 0 auto; 
+}
+
+@media (max-width: 900px) {
+  .footer-container { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 600px) {
+  .footer-container { grid-template-columns: 1fr; gap: 24px; }
+}
+
+.footer-logos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.footer-logo { 
+  height: 42px; 
+  width: auto;
+  background: #ffffff; 
+  padding: 4px; 
+  border-radius: 6px; 
+  border: 1px solid rgba(247, 220, 111, 0.4);
+}
+
+.footer-col-brand h3 {
+  color: var(--yellow);
+  font-size: 18px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.footer-tagline {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.cert-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cert-badge {
+  background: rgba(247, 220, 111, 0.15);
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+}
+
+.footer-col h4 {
+  color: var(--yellow);
+  font-size: 15px;
+  margin-bottom: 12px;
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--yellow);
+  padding-bottom: 4px;
+  display: inline-block;
+}
+
+.footer-col a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  display: block;
+  font-size: 13.5px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.footer-col a:hover {
+  color: var(--yellow);
+  transform: translateX(3px);
+}
+
+.footer-col p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+.footer-hours {
+  font-size: 12px;
+  color: var(--yellow);
+  background: rgba(255,255,255,0.06);
+  padding: 6px 10px;
+  border-radius: 6px;
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.social-icons a {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(247,220,111,0.3);
+  padding: 8px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.social-icons a:hover {
+  background: var(--yellow);
+  transform: translateY(-3px);
+}
+
+.social-icons a:hover svg {
+  stroke: var(--brown);
+}
+
+.footer-cookie-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.footer-cookie-btn:hover {
+  background: var(--yellow);
+  color: var(--brown);
+}
+
+.footer-newsletter-box {
+  grid-column: 1 / -1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(247, 220, 111, 0.3);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.news-text {
+  flex: 1;
+  min-width: 260px;
+}
+
+.news-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.news-head h4 {
+  color: var(--yellow);
+  font-size: 17px;
+  margin: 0;
+  font-weight: 700;
+  border: none;
+  padding: 0;
+}
+
+.news-text p {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  margin: 0;
+}
+
+.news-form {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  max-width: 440px;
+}
+
+.news-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(247, 220, 111, 0.4);
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  font-size: 13.5px;
+  outline: none;
+}
+
+.news-form button {
+  background: var(--yellow);
+  color: var(--brown);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.news-form button:hover {
+  background: #fff;
+  color: var(--brown);
+  transform: scale(1.02);
+}
+
+.news-success {
+  display: none;
+  color: var(--yellow);
+  font-size: 13.5px;
+  font-weight: 700;
+  width: 100%;
+  text-align: center;
+  background: rgba(247, 220, 111, 0.12);
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--yellow);
+}
+
+.footer-bottom {
+  max-width: 1140px;
+  margin: 28px auto 0 auto;
+  padding-top: 18px;
+  border-top: 1px solid rgba(247, 220, 111, 0.2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footer-legal {
+  display: flex;
+  gap: 16px;
+}
+
+.footer-legal a {
+  color: rgba(247, 220, 111, 0.85);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-legal a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+/* Initial state for payment cards */
+#mpesaCard, #globalCard, #pesapalCard {
+    display: none;
+}
+
+/* Styling for the selection buttons */
+.pay-option {
+    border: 2px solid #eee;
+    padding: 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+    background: white;
+    margin-bottom: 10px;
+    
+    /* FIX: Ensure they don't grow too large */
+    width: 100%; 
+    max-width: 100%; /* Keeps them contained within the parent card */
+}
+
+/* Optional: Make them look better on wider screens */
+@media (min-width: 600px) {
+    .pay-option {
+        max-width: 400px; /* Limits the width so they don't span the whole page */
+    }
+}
+
+.pay-option:hover {
+    border-color: var(--yellow); /* Added better hover color contrast */
+}
+
+/* When a button is active */
+.pay-option.active {
+    border-color: var(--brown);
+    background: #fdfaf7;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+#modalBackdrop {
+    display: none; /* Controlled by JS */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark semi-transparent overlay */
+    backdrop-filter: blur(5px); /* Optional: blurs the tea factory site behind it */
+    z-index: 9999; /* Higher than arrows (50) and nav */
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Ensure the actual modal box has a background */
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+.container {
+    width: 94%;
+    max-width: 1100px;
+    margin: 26px auto;
+    display: grid;
+ 
+/* Reduce font sizes for mobile screens */
+@media (max-width: 600px) {
+    body {
+        font-size: 14px; /* Default for mobile */
+    }
+
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.2rem; }
+
+    /* Shrink table text in the cart */
+    #cartBody td {
+        font-size: 12px !important;
+        padding: 5px !important;
+    }
+
+    /* Shrink button text and inputs */
+    input, button, select {
+        font-size: 13px !important;
+        padding: 8px !important;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+      <div class="nav-left">
+        <a href="index.html" class="logo-area" style="text-decoration:none; color:inherit;">
+          <img src="assets/tegat_logo.png" alt="Tegat Tea logo">
+          <span>Tegat Tea Factory</span>
+        </a>
+
+        <div class="nav-links" id="navLinks">
+          <a href="index.html">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <span>Factory Overview</span>
+          </a>
+          <a href="index.html#about">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>About</span>
+          </a>
+          <a href="index.html#products">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.4 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+            <span>Tea Products</span>
+          </a>
+          <a href="index-1.html">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span>Retail Shop</span>
+          </a>
+          <a href="index.html#faq">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>FAQ</span>
+          </a>
+          <a href="pay$submit.html" style="background:var(--yellow);color:#0b2b0e;font-weight:800;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span>Checkout</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="right-side">
+        <div class="cart-container">
+          <a href="view.html" class="cart-icon" id="cartIcon" title="View Cart">
+            <div class="cart-wrapper">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l3.6 7.59a2 2 0 0 0 1.75 1.09H19a2 2 0 0 0 1.92-2.56L19.3 5H6"/>
+              </svg>
+              <span id="cartCount" class="cart-count">0</span>
+            </div>
+          </a>
+        </div>
+
+        <div class="menu-toggle" onclick="toggleMenu()" id="menuBtn" aria-label="Toggle Navigation Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-container">
+        <ul class="progressbar">
+            <li class="active">Cart</li>
+            <li class="active">Checkout</li>
+            <li>Payment</li>
+            <li>Complete</li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <main>
+            <div class="card">
+                <div class="section-title"><h2>1. Delivery Region</h2></div>
+                <div class="region-toggle">
+                    <button class="region-btn active" id="btnLocal" onclick="setRegion('local')">Delivery within Kenya</button>
+                    <button class="region-btn" id="btnGlobal" onclick="setRegion('global')">International Shipping</button>
+                </div>
+
+                <div class="section-title"><h2>2. Shipping Details</h2></div>
+                
+                <label>Full Name</label>
+                <input id="fullName" class="input" type="text" placeholder="e.g. Jane Doe">
+                <div id="fullNameError" class="error-message">Please enter at least two names (letters only).</div>
+
+                <label>Email Address</label>
+                <input id="email" class="input" type="email" placeholder="jane@example.com">
+                <div id="emailError" class="error-message">Please enter a valid email address.</div>
+                
+                <label>Phone Number (WhatsApp Preferred)</label>
+                <input id="phoneNumber" class="input" type="tel" placeholder="07XXXXXXXX">
+                <div id="phoneNumberError" class="error-message">A valid phone number is required.</div>
+
+
+               
+<div id="transportSection">
+    <label>Preferred Transport / Delivery Means</label>
+    <select id="transportMeans" class="input">
+        <option value="">-- Select Transport --</option>
+        <!-- Added 'local-opt' class to these -->
+        <option value="Boda Boda" class="local-opt">Boda Boda (Within Kericho/Local Town)</option>
+        <option value="Matatu Sacco" class="local-opt">Matatu Sacco Parcel (e.g., Easy Coach, Prestige)</option>
+        <option value="Courier Service" class="local-opt">Courier (G4S, Wells Fargo, Posta)</option>
+        
+        <!-- Added ID 'airOpt' and hidden by default -->
+        <option value="Air Transport" id="airOpt" style="display:none">Air Freight / International Courier</option>
+        
+        <option value="Self Pickup" class="local-opt">Self Pickup at Factory</option>
+    </select>
+    <div id="transportError" class="error-message">Please select how you want your tea delivered.</div>
+</div>
+
+
+                <div id="localFields">
+                    <label>County</label>
+                    <select id="county" class="input">
+                        <option value="">-- Select County --</option>
+                        <option value="Baringo">Baringo</option>
+                        <option value="Bomet">Bomet</option>
+                        <option value="Bungoma">Bungoma</option>
+                        <option value="Busia">Busia</option>
+                        <option value="Elgeyo Marakwet">Elgeyo Marakwet</option>
+                        <option value="Embu">Embu</option>
+                        <option value="Garissa">Garissa</option>
+                        <option value="Homa Bay">Homa Bay</option>
+                        <option value="Isiolo">Isiolo</option>
+                        <option value="Kajiado">Kajiado</option>
+                        <option value="Kakamega">Kakamega</option>
+                        <option value="Kericho">Kericho</option>
+                        <option value="Kiambu">Kiambu</option>
+                        <option value="Kilifi">Kilifi</option>
+                        <option value="Kirinyaga">Kirinyaga</option>
+                        <option value="Kisii">Kisii</option>
+                        <option value="Kisumu">Kisumu</option>
+                        <option value="Kitui">Kitui</option>
+                        <option value="Kwale">Kwale</option>
+                        <option value="Laikipia">Laikipia</option>
+                        <option value="Lamu">Lamu</option>
+                        <option value="Machakos">Machakos</option>
+                        <option value="Makueni">Makueni</option>
+                        <option value="Mandera">Mandera</option>
+                        <option value="Marsabit">Marsabit</option>
+                        <option value="Meru">Meru</option>
+                        <option value="Migori">Migori</option>
+                        <option value="Mombasa">Mombasa</option>
+                        <option value="Murang'a">Murang'a</option>
+                        <option value="Nairobi City">Nairobi City</option>
+                        <option value="Nakuru">Nakuru</option>
+                        <option value="Nandi">Nandi</option>
+                        <option value="Narok">Narok</option>
+                        <option value="Nyamira">Nyamira</option>
+                        <option value="Nyandarua">Nyandarua</option>
+                        <option value="Nyeri">Nyeri</option>
+                        <option value="Samburu">Samburu</option>
+                        <option value="Siaya">Siaya</option>
+                        <option value="Taita Taveta">Taita Taveta</option>
+                        <option value="Tana River">Tana River</option>
+                        <option value="Tharaka Nithi">Tharaka Nithi</option>
+                        <option value="Trans Nzoia">Trans Nzoia</option>
+                        <option value="Turkana">Turkana</option>
+                        <option value="Uasin Gishu">Uasin Gishu</option>
+                        <option value="Vihiga">Vihiga</option>
+                        <option value="Wajir">Wajir</option>
+                        <option value="West Pokot">West Pokot</option>
+                    </select>
+                    <div id="countyError" class="error-message">Please select a delivery county.</div>
+
+                    <label>Delivery Location / GPS</label>
+                    <input id="location" class="input" type="text" placeholder="e.g. Kericho Town, Central Market or auto-detect GPS">
+                    <button type="button" id="getLocationBtn">📍 Auto-detect GPS Location</button>
+                    <div id="locationError" class="error-message">Please enter a delivery location or detect GPS.</div>
+                </div>
+
+                <div id="globalFields" style="display:none">
+                    <label>Country</label>
+                    <input id="country" class="input" type="text" placeholder="e.g. United Kingdom">
+                    <div id="countryError" class="error-message">Country is required.</div>
+
+                    <label>Shipping Address</label>
+                    <textarea id="address" class="input" style="height:80px" placeholder="Street, City, Postcode"></textarea>
+                    <div id="addressError" class="error-message">Delivery address is required.</div>
+
+                    <label>International Location / GPS (Optional)</label>
+                    <input id="globalLocation" class="input" type="text" placeholder="e.g. London Hub or auto-detect GPS">
+                    <button type="button" id="verifyGlobalBtn">📍 Auto-detect International GPS</button>
+                    <div id="globalLocationError" class="error-message">Location info required.</div>
+                </div>   
+            </div>
+
+            <div class="card">
+                <div class="section-title"><h2>3. Your Items</h2></div>
+                <table style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="text-align:left; font-size:12px; color:#888;">
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th id="tableTotalHeader">Total (Ksh)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartBody"></tbody>
+                </table>
+            </div>
+       
+
+</main>  
+
+ <aside>
+<div class="card">
+    <h3 style="color:var(--brown); margin-top:0;">Choose Payment Method</h3>
+    <div id="paymentPicker">
+        <div class="pay-option" onclick="selectPayment('mpesa')" id="optMpesa">
+            <input type="radio" name="pMethod" id="radioMpesa">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#2ecc71"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-1-6h-3V8h-2v5H8l4 4 4-4z"/></svg>
+            <strong>M-Pesa Express / Till</strong>
+        </div>
+
+        <div class="pay-option" onclick="selectPayment('pesapal')" id="optPesapal">
+            <input type="radio" name="pMethod" id="radioPesapal">
+            <div style="display:flex; gap:4px; align-items:center;">
+                <svg width="26" height="16" viewBox="0 0 36 24" fill="none"><rect width="36" height="24" rx="4" fill="#1A1F71"/><path d="M13.8 16.5L15.6 7.5H18.2L16.4 16.5H13.8ZM23.7 7.7C23.2 7.5 22.4 7.3 21.4 7.3C18.9 7.3 17.1 8.6 17.1 10.5C17.1 11.9 18.4 12.7 19.3 13.1C20.2 13.6 20.6 13.9 20.6 14.3C20.6 14.9 19.8 15.2 19.1 15.2C18.1 15.2 17.3 14.9 16.7 14.6L16.2 16.6C16.9 17 18 17.2 19.1 17.2C21.8 17.2 23.5 15.9 23.5 13.9C23.5 11.9 20.8 11.8 20.8 10.8C20.8 10.4 21.2 10 22.1 10C22.8 10 23.5 10.1 24 10.4L23.7 7.7ZM28.5 7.5H26.5C25.9 7.5 25.4 7.7 25.2 8.2L21.5 16.5H24.3L24.8 15.1H28.1L28.4 16.5H30.9L28.5 7.5ZM25.5 13.2L26.7 9.8L27.4 13.2H25.5Z" fill="#FFF"/></svg>
+                <svg width="26" height="16" viewBox="0 0 36 24" fill="none"><rect width="36" height="24" rx="4" fill="#222222"/><circle cx="14" cy="12" r="7" fill="#EB001B"/><circle cx="22" cy="12" r="7" fill="#F79E1B" fill-opacity="0.8"/></svg>
+            </div>
+            <strong>Card (Visa / Mastercard)</strong>
+        </div>
+
+        <div class="pay-option" onclick="selectPayment('bank')" id="optBank">
+            <input type="radio" name="pMethod" id="radioBank">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#3498db"><path d="M4 10h2v7H4zm5 0h2v7H9zm5 0h2v7h-2zm5 0h2v7h-2zM2 22h20v-3H2v3zm10-20L2 6v2h20V6l-10-4z"/></svg>
+            <strong>Bank Wire Transfer</strong>
+        </div>
+    </div>
+</div>
+
+
+       
+            <div class="card" style="position: sticky; top: 20px;">
+                <h3 style="margin-top:0; color:var(--brown)">Order Summary</h3>
+                <div style="font-size: 13px; color: #666; margin-bottom: 10px;">Order Ref: <span id="displayOrderID" style="font-weight:bold; color:var(--brown)">...</span></div>
+                <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.2rem; border-top: 1px solid #eee; padding-top:10px; color:var(--brown)">
+                    <span>Total</span><span id="summaryTotal">Ksh. 0</span>
+                </div>
+                <button class="confirm-btn" id="openConfirm">Proceed to Payment</button>
+            </div>
+
+            <div id="mpesaCard" class="card" style="max-width: 350px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <div style="background: #2ecc71; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: white; font-weight: 800; font-size: 12px; letter-spacing: 1px;">LIPA NA M-PESA</span>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#ffffff"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14zm-1-6h-3V8h-2v5H8l4 4 4-4z"/></svg>
+                </div>
+
+                <div style="padding: 20px;">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <span style="display: block; font-size: 13px; color: #666; font-weight: 600;">Buy Goods Till Number</span>
+                        <div style="margin: 12px 0; background: #f0fdf4; padding: 15px; border-radius: 10px; border: 2px solid #2ecc71;">
+                            <span id="tillNum" style="font-family: 'Courier New', monospace; font-size: 28px; font-weight: 900; color: #1a472a; letter-spacing: 2px;">892811</span>
+                        </div>
+                        <button id="copyBtn" onclick="copyTill()" style="width: 100%; background: #0b2b0e; color: #f7dc6f; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: background 0.2s; font-size: 14px;">
+                            <span id="btnText">Copy Till Number</span>
+                        </button>
+                    </div>
+
+                    <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; border-top: 1px solid #eee;">
+                        <p style="margin: 0 0 8px 0; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;">How to pay:</p>
+                        <ol style="margin: 0; padding: 0 0 0 18px; font-size: 12px; color: #444; line-height: 1.6;">
+                            <li>Go to M-Pesa > <b>Lipa na M-Pesa</b></li>
+                            <li>Select <b>Buy Goods and Services</b></li>
+                            <li>Enter Till Number <b>892811</b></li>
+                            <li>Enter the <b>Order Total</b> and your PIN</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+
+<!-- Mastercard / Visa Card -->
+<div id="pesapalCard" class="card" style="display:none; max-width: 350px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+    <!-- Header -->
+    <div style="background: #34495e; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: white; font-weight: 800; font-size: 12px; letter-spacing: 1px;">CARD PAYMENT</span>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <svg width="26" height="16" viewBox="0 0 36 24" fill="none"><rect width="36" height="24" rx="4" fill="#1A1F71"/><path d="M13.8 16.5L15.6 7.5H18.2L16.4 16.5H13.8ZM23.7 7.7C23.2 7.5 22.4 7.3 21.4 7.3C18.9 7.3 17.1 8.6 17.1 10.5C17.1 11.9 18.4 12.7 19.3 13.1C20.2 13.6 20.6 13.9 20.6 14.3C20.6 14.9 19.8 15.2 19.1 15.2C18.1 15.2 17.3 14.9 16.7 14.6L16.2 16.6C16.9 17 18 17.2 19.1 17.2C21.8 17.2 23.5 15.9 23.5 13.9C23.5 11.9 20.8 11.8 20.8 10.8C20.8 10.4 21.2 10 22.1 10C22.8 10 23.5 10.1 24 10.4L23.7 7.7ZM28.5 7.5H26.5C25.9 7.5 25.4 7.7 25.2 8.2L21.5 16.5H24.3L24.8 15.1H28.1L28.4 16.5H30.9L28.5 7.5ZM25.5 13.2L26.7 9.8L27.4 13.2H25.5Z" fill="#FFF"/></svg>
+            <svg width="26" height="16" viewBox="0 0 36 24" fill="none"><rect width="36" height="24" rx="4" fill="#ffffff"/><circle cx="14" cy="12" r="7" fill="#EB001B"/><circle cx="22" cy="12" r="7" fill="#F79E1B" fill-opacity="0.8"/></svg>
+        </div>
+    </div>
+
+    <div style="padding: 20px;">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <span style="display: block; font-size: 13px; color: #666; font-weight: 600;">Secure Payment Gateway</span>
+            <div style="margin: 12px 0; background: #f8f9fa; padding: 15px; border-radius: 10px; border: 2px solid #34495e;">
+                <span style="font-size: 14px; color: #34495e; font-weight: 700;">MASTERCARD / VISA / AMEX</span>
+            </div>
+            
+            <!-- This button opens Pesapal in a new tab -->
+            <button onclick="window.open('https://www.pesapal.com/pay/tegatteafactory', '_blank')" style="width: 100%; background: #000; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px;">
+                Pay Now via Pesapal
+            </button>
+        </div>
+
+        <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; border-top: 1px solid #eee;">
+            <p style="margin: 0 0 8px 0; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase;">Next Steps:</p>
+            <ol style="margin: 0; padding: 0 0 0 18px; font-size: 12px; color: #444; line-height: 1.6;">
+                <li>Click <b>Pay Now</b> to open the secure portal</li>
+                <li>Complete your transaction on the new page</li>
+                <li>Save the <b>Tracking ID / Reference</b> from your email</li>
+                <li>Return here and click <b>Proceed to Payment</b> to confirm</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+            <div id="globalCard" class="card" style="display:none; border-left-color: #3498db;">
+                <h3 style="color:#3498db; margin-top:0; font-size: 15px;">Bank Transfer (International)</h3>
+                <div style="font-size: 12px; line-height: 1.6; color: #444;">
+                    <strong style="color: #3498db;">KCB Bank Kenya</strong><br>
+                    Tegat Tea Factory<br>
+                    
+                    <div style="margin-top: 10px; background: #f0f7ff; padding: 10px; border-radius: 6px; border: 1px solid #d0e7ff;">
+                        <span style="font-size: 11px; color: #555; display: block; font-weight: bold;">ACCOUNT NUMBER:</span>
+                        <span id="bankAcc" style="font-family: monospace; font-size: 16px; font-weight: bold;">9876543210</span>
+                        <button onclick="copyText('bankAcc', this)" style="background: none; border: 1px solid #3498db; color: #3498db; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer; margin-left: 5px;">Copy</button>
+                        
+                        <span style="font-size: 11px; color: #555; display: block; font-weight: bold; margin-top: 8px;">SWIFT CODE:</span>
+                        <span id="swiftCode" style="font-family: monospace; font-size: 16px; font-weight: bold;">KCBKENX</span>
+                        <button onclick="copyText('swiftCode', this)" style="background: none; border: 1px solid #3498db; color: #3498db; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer; margin-left: 5px;">Copy</button>
+
+                        <div style="margin-top: 12px; padding-top: 8px; border-top: 1px dashed #3498db;">
+                            <span style="font-size: 11px; color: #e67e22; display: block; font-weight: bold;">PAYMENT REFERENCE:</span>
+                            <span id="bankRef" style="font-family: monospace; font-size: 15px; font-weight: bold; color: #e67e22;">---</span>
+                            <button onclick="copyText('bankRef', this)" style="background: none; border: 1px solid #e67e22; color: #e67e22; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer; margin-left: 5px;">Copy ID</button>
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size: 11px; color: #888; margin-top: 10px;"><i>*Please use the Reference ID above when making the transfer.</i></p>
+            </div>
+</div>
+      
+
+  </aside>
+    
+<body>
+<div class="modal-backdrop" id="modalBackdrop" style="display:none">
+  <div class="modal">
+
+    <h3 id="confirmTitle" style="margin-top:0; color:var(--brown)">Finalize Order</h3>
+    <p id="confirmNote" style="font-size:13px; color:#666"></p>
+
+    <!-- M-PESA -->
+    <div id="mpesaConfirmSection">
+      <input id="mpesaCode" class="input" type="text" maxlength="10" placeholder="QHL9XXXXXX" style="text-transform: uppercase;">
+      <div id="mpesaCodeError" class="error-message" style="display:none; color:red; font-size:12px;">
+        Invalid M-Pesa code (10 characters required)
+      </div>
+    </div>
+
+    <!-- BANK -->
+    <div id="globalConfirmSection" style="display:none">
+      <p style="font-size:13px; color:#666">
+        Send the payment and use the reference below:
+      </p>
+      <p style="font-size:12px; color:var(--brown); font-weight:bold;">
+        Order Ref: <span id="bankOrderRef"></span>
+      </p>
+    </div>
+
+    <!-- PESAPAL -->
+    <div id="cardConfirmSection" style="display:none">
+      <input id="cardRef" class="input" type="text" placeholder="e.g. PP-123456" style="text-transform: uppercase;">
+      <div id="cardRefError" class="error-message" style="display:none; color:red; font-size:12px;">
+        Tracking ID required
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:20px">
+      <button onclick="closeModal()" style="flex:1; padding:12px; border:1px solid #ddd; background:#fff; border-radius:8px; cursor:pointer">
+        Back
+      </button>
+      <button id="submitOrder" style="flex:1; background:var(--brown); color:var(--yellow); border:0; border-radius:8px; font-weight:bold; cursor:pointer">
+        Confirm Order
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-col footer-col-brand">
+      <div class="footer-logos">
+        <img src="assets/tegat_logo.png" alt="Tegat Tea Logo" class="footer-logo">
+        <img src="assets/ktda_logo.png" alt="KTDA Logo" class="footer-logo" referrerPolicy="no-referrer">
+      </div>
+      <h3>Tegat Tea Factory</h3>
+      <p class="footer-tagline">Producers of world-class Kenyan Black CTC & Specialty Teas in Kericho Highlands.</p>
+      <div class="cert-pills">
+        <span class="cert-badge">ISO 22000</span>
+        <span class="cert-badge">Rainforest Alliance</span>
+        <span class="cert-badge">KTDA Certified</span>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Quick Navigation</h4>
+      <a href="index.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home / Factory</a>
+      <a href="index-1.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Retail Tea Shop</a>
+      <a href="product.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>Quality Specifications</a>
+      <a href="view.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Shopping Cart</a>
+      <a href="pay$submit.html"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>M-Pesa Checkout</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Factory &amp; Contacts</h4>
+      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Kericho, Highlands Region, Kenya</p>
+      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+254 723 121 163</p>
+      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Info@tegat.ktdateas.com</p>
+      <div class="footer-hours"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mon - Sat: 8:00 AM - 5:00 PM EAT</div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Connect &amp; Legal</h4>
+      <div class="social-icons">
+        <a href="#" target="_blank" aria-label="Facebook">
+          <svg width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+        </a>
+        <a href="#" target="_blank" aria-label="Instagram">
+          <svg width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" target="_blank" aria-label="Twitter X">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4l11.733 16h4.267l-11.733 -16z" /><path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
+          </svg>
+        </a>
+      </div>
+      <div style="margin-top: 14px;">
+        <button type="button" class="footer-cookie-btn" onclick="openCookieSettings(); return false;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 10 10 10 10 0 0 1-10-10z"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="10" cy="15" r="1"/><circle cx="15.5" cy="13.5" r="1"/></svg>Cookie Preferences</button>
+      </div>
+    </div>
+
+    <div class="footer-newsletter-box">
+      <div class="news-text">
+        <div class="news-head">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+          <h4>Tea Factory Dispatch Newsletter</h4>
+        </div>
+        <p>Subscribe for weekly tea market auction updates, bulk tea catalog releases &amp; special offers.</p>
+      </div>
+      <form class="news-form" onsubmit="handleFooterSubscribe(event)">
+        <input type="email" id="footerSubEmail" placeholder="Enter your business email address..." required>
+        <button type="submit">Subscribe</button>
+      </form>
+      <div id="footerSubSuccess" class="news-success">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg>Thank you for subscribing to Tegat Tea Factory updates!
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div>© <span id="year"></span> Tegat Tea Factory Company Ltd. All Rights Reserved.</div>
+    <div class="footer-legal">
+      <a href="index.html">Privacy Policy</a>
+      <a href="index.html">Terms of Supply</a>
+      <a href="admin.html" style="color:#ff8a80;">Staff Portal</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMenu() {
+  const nav = document.getElementById("navLinks");
+  if (nav) nav.classList.toggle("show");
+}
+
+document.addEventListener("click", function(e) {
+  const nav = document.getElementById("navLinks");
+  const btn = document.getElementById("menuBtn");
+  if (nav && btn && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove("show");
+  }
+});
+
+function toggleMobileNav() {
+  const nav = document.getElementById("mobileNav");
+  if (nav) nav.classList.toggle("open");
+}
+
+function handleFooterSubscribe(e) {
+  e.preventDefault();
+  const input = document.getElementById('footerSubEmail');
+  const success = document.getElementById('footerSubSuccess');
+  if (input && success) {
+    success.style.display = 'block';
+    input.value = '';
+    setTimeout(() => {
+      success.style.display = 'none';
+    }, 4000);
+  }
+}
+
+function syncCartBadge() {
+  const count = (el('cartCount') ? el('cartCount').textContent : '0');
+  const navCount = document.getElementById('cartCountNav');
+  const mobileCount = document.getElementById('cartCountMobile');
+  if (navCount) navCount.textContent = count;
+  if (mobileCount) mobileCount.textContent = count;
+}
+setInterval(syncCartBadge, 500);
+</script>
+
+<script>
+
+
+// --- CONFIGURATION ---
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOrBeq1nEoWz-oeoSwV9SVbJ58_PCOafpYDGibxL5g3VR2POXMLAGj4Afvb4-aqQMp/exec"; 
+const SECRET_TOKEN = "TEGAT-TEA-2025-PRIVATE"; 
+const KSH_TO_USD = 130.00;
+
+let currentRegion = 'local';
+const el = (id) => document.getElementById(id);
+let selectedPaymentMethod = null;
+// --- IMPROVED VALIDATORS ---
+const validators = {
+    // Allows any reasonable name (at least 2 chars)
+    name: (val) => val.trim().length >= 2, 
+
+    // Standard email validation
+    email: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim()),
+
+    // DYNAMIC PHONE VALIDATION
+    phone: (val) => val.trim().replace(/[\s\-\+\(\)]/g, '').length >= 7,
+
+    // Code/Ref validation
+    mpesa: (val) => val.trim().length >= 4,
+
+    // Generic text length check
+    text: (val, min) => val.trim().length >= min
+};
+
+function closeModal() {
+    if (el('modalBackdrop')) el('modalBackdrop').style.display = 'none';
+}
+
+function selectPayment(method) {
+    selectedPaymentMethod = method;
+
+    if (el('mpesaCard')) el('mpesaCard').style.display = 'none';
+    if (el('globalCard')) el('globalCard').style.display = 'none';
+    if (el('pesapalCard')) el('pesapalCard').style.display = 'none';
+
+    if (method === 'mpesa' && el('mpesaCard')) {
+        el('mpesaCard').style.display = 'block';
+    } else if (method === 'bank' && el('globalCard')) {
+        el('globalCard').style.display = 'block';
+    } else if (method === 'pesapal' && el('pesapalCard')) {
+        el('pesapalCard').style.display = 'block';
+    }
+    
+    document.querySelectorAll('.pay-option').forEach(e => e.classList.remove('active'));
+    
+    let optId = 'opt' + method.charAt(0).toUpperCase() + method.slice(1);
+    if (el(optId)) {
+        el(optId).classList.add('active');
+        const radio = el(optId).querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+    }
+}
+
+function copyTill() {
+    const numEl = el('tillNum');
+    if (numEl) {
+        try { navigator.clipboard.writeText(numEl.innerText.trim()); } catch(e){}
+        if (el('btnText')) el('btnText').innerText = "Copied ✓";
+        setTimeout(() => { if (el('btnText')) el('btnText').innerText = "Copy Till Number"; }, 2000);
+    }
+}
+
+function copyText(id, btn) {
+    const textEl = el(id);
+    if (textEl && btn) {
+        try { navigator.clipboard.writeText(textEl.innerText.trim()); } catch(e){}
+        const oldText = btn.innerText;
+        btn.innerText = "Copied ✓";
+        setTimeout(() => { btn.innerText = oldText; }, 2000);
+    }
+}
+
+function safeParseJSON(str, fallback) {
+    if (!str || str === 'undefined' || str === 'null') return fallback;
+    try {
+        return JSON.parse(str);
+    } catch(e) {
+        return fallback;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const now = new Date();
+    const datePart = now.getFullYear().toString() +
+        (now.getMonth() + 1).toString().padStart(2, '0') +
+        now.getDate().toString().padStart(2, '0');
+    const timePart = now.getHours().toString().padStart(2, '0') +
+        now.getMinutes().toString().padStart(2, '0') +
+        now.getSeconds().toString().padStart(2, '0');
+    
+    const timestampID = `TR-${datePart}-${timePart}`;
+    
+    if (el('displayOrderID')) el('displayOrderID').innerText = timestampID;
+    if (el('bankRef')) el('bankRef').innerText = timestampID;
+    if (el('bankOrderRef')) el('bankOrderRef').innerText = timestampID;
+    if (el('year')) el('year').innerText = now.getFullYear();
+
+    try {
+        const cust = safeParseJSON(localStorage.getItem('tegat_customer_account'), {});
+        if (cust.name && el('fullName')) el('fullName').value = cust.name;
+        if (cust.email && el('email')) el('email').value = cust.email;
+        if (cust.phone && el('phoneNumber')) el('phoneNumber').value = cust.phone;
+    } catch(e){}
+
+    updateCart();
+    selectPayment('mpesa');
+});
+
+const countyCoords = {
+    "Baringo": [0.48, 35.97], "Bomet": [-0.78, 35.34], "Bungoma": [0.57, 34.56], 
+    "Busia": [0.46, 34.11], "Elgeyo Marakwet": [0.80, 35.50], "Embu": [-0.53, 37.45], 
+    "Garissa": [-0.45, 39.64], "Homa Bay": [-0.52, 34.45], "Isiolo": [0.35, 37.58], 
+    "Kajiado": [-2.09, 36.78], "Kakamega": [0.28, 34.75], "Kericho": [-0.36, 35.28], 
+    "Kiambu": [-1.17, 36.83], "Kilifi": [-3.63, 39.85], "Kirinyaga": [-0.50, 37.30], 
+    "Kisii": [-0.68, 34.77], "Kisumu": [-0.10, 34.75], "Kitui": [-1.37, 38.01], 
+    "Kwale": [-4.17, 39.45], "Laikipia": [0.36, 36.78], "Lamu": [-2.27, 40.90], 
+    "Machakos": [-1.51, 37.26], "Makueni": [-1.80, 37.62], "Mandera": [3.93, 41.85], 
+    "Marsabit": [2.33, 37.98], "Meru": [0.05, 37.64], "Migori": [-1.06, 34.47], 
+    "Mombasa": [-4.03, 39.66], "Murang'a": [-0.72, 37.15], "Nairobi City": [-1.28, 36.81], 
+    "Nakuru": [-0.30, 36.06], "Nandi": [0.18, 35.12], "Narok": [-1.08, 35.86], 
+    "Nyamira": [-0.56, 34.93], "Nyandarua": [-0.30, 36.48], "Nyeri": [-0.42, 36.95], 
+    "Samburu": [1.20, 36.76], "Siaya": [0.06, 34.28], "Taita Taveta": [-3.31, 38.48], 
+    "Tana River": [-1.50, 40.00], "Tharaka Nithi": [-0.30, 37.90], "Trans Nzoia": [1.02, 34.95], 
+    "Turkana": [3.58, 35.43], "Uasin Gishu": [0.51, 35.28], "Vihiga": [0.01, 34.72], 
+    "Wajir": [1.74, 40.05], "West Pokot": [1.50, 35.10]
+};
+
+// --- CORE FUNCTIONS (DISTANCE & CART) ---
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; 
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function updateCart() {
+    const cart = safeParseJSON(localStorage.getItem('cart'), []);
+    let totalKsh = 0;
+    
+    if (cart.length === 0) {
+        el('cartBody').innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px;"><a href="index.html" style="color: var(--brown); text-decoration: underline; font-weight: bold;">Go back to Shop.</a></td></tr>';
+        if (el('openConfirm')) el('openConfirm').disabled = true;
+        if (el('cartCount')) el('cartCount').innerText = 0;
+        return;
+    }
+
+    el('cartBody').innerHTML = cart.map((i, index) => {
+        const qty = Number(i.quantity || i.qty || 1);
+        const lineTotalKsh = (i.price * qty);
+        totalKsh += lineTotalKsh;
+
+        let displayPrice = currentRegion === 'local' ? 
+            `Ksh. ${lineTotalKsh.toLocaleString()}` : 
+            `$ ${(lineTotalKsh / KSH_TO_USD).toFixed(2)}`;
+
+        return `<tr>
+            <td style="padding:10px 0; font-size:14px;"><strong>${i.name}</strong></td>
+            <td>
+                <div class="qty-controls">
+                    <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                    <span style="font-size:13px;">${qty}</span>
+                    <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                </div>
+            </td>
+            <td style="font-size:13px;">${displayPrice}</td>
+            <td><button class="remove-btn" onclick="removeItem(${index})">×</button></td>
+        </tr>`;
+    }).join('');
+
+    if (el('summaryTotal')) el('summaryTotal').innerText = currentRegion === 'local' ? `Ksh. ${totalKsh.toLocaleString()}` : `$ ${(totalKsh / KSH_TO_USD).toFixed(2)}`;
+    
+    if (el('cartCount')) el('cartCount').innerText = cart.reduce((acc, curr) => acc + Number(curr.quantity || curr.qty || 1), 0);
+    if (el('openConfirm')) el('openConfirm').disabled = false;
+}
+
+function changeQty(index, delta) {
+    let cart = safeParseJSON(localStorage.getItem('cart'), []);
+    if (!cart[index]) return;
+    let currentQty = Number(cart[index].quantity || cart[index].qty || 1);
+    let newQty = currentQty + delta;
+
+    if (newQty <= 0) {
+        cart.splice(index, 1);
+    } else {
+        cart[index].quantity = newQty;
+        cart[index].qty = newQty;
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart();
+}
+
+function removeItem(index) {
+    let cart = safeParseJSON(localStorage.getItem('cart'), []);
+    cart.splice(index, 1);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart();
+}
+
+// --- REGION HANDLING ---
+function setRegion(type) {
+    currentRegion = type;
+    el('btnLocal').classList.toggle('active', type === 'local');
+    el('btnGlobal').classList.toggle('active', type === 'global');
+    
+    el('localFields').style.display = type === 'local' ? 'block' : 'none';
+    el('globalFields').style.display = type === 'global' ? 'block' : 'none';
+
+    const transportSelect = el('transportMeans');
+    const localOptions = document.querySelectorAll('.local-opt');
+    const airOption = el('airOpt');
+
+    if (type === 'global') {
+        localOptions.forEach(opt => opt.style.display = 'none');
+        if (airOption) airOption.style.display = 'block';
+        transportSelect.value = "Air Transport";
+        if (el('optMpesa')) el('optMpesa').style.display = 'none';
+    } else {
+        localOptions.forEach(opt => opt.style.display = 'block');
+        if (airOption) airOption.style.display = 'none';
+        transportSelect.value = ""; 
+        if (el('optMpesa')) el('optMpesa').style.display = 'flex';
+    }
+
+    el('mpesaCard').style.display = 'none';
+    el('globalCard').style.display = 'none';
+    el('pesapalCard').style.display = 'none';
+    
+    selectedPaymentMethod = null;
+    document.querySelectorAll('.pay-option').forEach(opt => opt.classList.remove('active'));
+    document.querySelectorAll('input[name="pMethod"]').forEach(radio => radio.checked = false);
+    
+    updateCart();
+}
+
+// --- GPS AUTO DETECT HANDLERS ---
+if (el('getLocationBtn')) {
+    el('getLocationBtn').addEventListener('click', function() {
+        const selectedCounty = el('county').value;
+        const btn = this;
+        btn.innerText = "⌛ Detecting Location...";
+        btn.disabled = true;
+        navigator.geolocation.getCurrentPosition((pos) => {
+            el('location').value = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)} (${selectedCounty || 'GPS Verified'})`;
+            el('locationError').style.display = 'none';
+            btn.innerText = "Location Detected ✓";
+            btn.style.background = "#2ecc71";
+            btn.style.color = "#fff";
+            btn.disabled = false;
+        }, (err) => {
+            if (selectedCounty) {
+                el('location').value = `${selectedCounty} Depot / Central Location`;
+                el('locationError').style.display = 'none';
+                btn.innerText = "Location Auto-filled ✓";
+                btn.style.background = "#2ecc71";
+                btn.style.color = "#fff";
+            } else {
+                alert("Please select a county first.");
+            }
+            btn.disabled = false;
+        }, { enableHighAccuracy: true });
+    });
+}
+
+if (el('verifyGlobalBtn')) {
+    el('verifyGlobalBtn').addEventListener('click', function() {
+        const btn = this;
+        btn.innerText = "⌛ Detecting Location...";
+        btn.disabled = true;
+        navigator.geolocation.getCurrentPosition((pos) => {
+            const lat = pos.coords.latitude; const lon = pos.coords.longitude;
+            el('globalLocation').value = `${lat.toFixed(4)}, ${lon.toFixed(4)} (GPS Verified)`;
+            el('globalLocationError').style.display = 'none';
+            btn.innerText = "Location Detected ✓"; btn.style.background = "#2ecc71"; btn.style.color = "#fff"; btn.disabled = false;
+        }, (err) => {
+            const countryVal = el('country').value || 'International';
+            el('globalLocation').value = `${countryVal} Direct Dispatch`;
+            el('globalLocationError').style.display = 'none';
+            btn.innerText = "Location Auto-filled ✓"; btn.style.background = "#2ecc71"; btn.style.color = "#fff"; btn.disabled = false;
+        }, { enableHighAccuracy: true });
+    });
+}
+
+// --- OPEN CONFIRM MODAL ---
+if (el('openConfirm')) {
+    el('openConfirm').addEventListener('click', () => {
+        let hasErrors = false;
+
+        document.querySelectorAll('.error-message').forEach(e => e.style.display = 'none');
+
+        if (!validators.name(el('fullName').value)) { el('fullNameError').style.display = 'block'; hasErrors = true; }
+        if (!validators.email(el('email').value)) { el('emailError').style.display = 'block'; hasErrors = true; }
+        if (!validators.phone(el('phoneNumber').value)) { el('phoneNumberError').style.display = 'block'; hasErrors = true; }
+
+        if (!selectedPaymentMethod) {
+            alert("Please select a payment method (M-Pesa, Card, or Bank) in the sidebar first.");
+            hasErrors = true;
+        }
+
+        if (currentRegion === 'local') {
+            if (!el('county').value) { el('countyError').style.display = 'block'; hasErrors = true; }
+            if (!el('location').value.trim()) { el('locationError').style.display = 'block'; hasErrors = true; }
+            if (!el('transportMeans').value) { el('transportError').style.display = 'block'; hasErrors = true; }
+        } else {
+            if (!validators.text(el('country').value, 2)) { el('countryError').style.display = 'block'; hasErrors = true; }
+            if (!validators.text(el('address').value, 5)) { el('addressError').style.display = 'block'; hasErrors = true; }
+        }
+
+        if (hasErrors) {
+            const firstError = document.querySelector('.error-message[style*="display: block"]');
+            if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return; 
+        }
+
+        if (selectedPaymentMethod === 'pesapal') {
+            el('confirmTitle').innerText = "Card Payment Confirmation";
+            el('confirmNote').innerText = "Enter the Pesapal Tracking ID or Transaction Reference:";
+            el('mpesaCode').placeholder = "e.g. PP-123456";
+        } else if (selectedPaymentMethod === 'mpesa') {
+            el('confirmTitle').innerText = "M-Pesa Confirmation";
+            el('confirmNote').innerText = "Enter the 10-digit M-Pesa code from SMS:";
+            el('mpesaCode').placeholder = "e.g. QHL9XXXXXX";
+        } else {
+            el('confirmTitle').innerText = "Bank Transfer Confirmation";
+            el('confirmNote').innerText = "Enter your Name or Bank Transfer Reference:";
+            el('mpesaCode').placeholder = "e.g. KCB-REF-1234";
+        }
+        
+        el('modalBackdrop').style.display = 'flex';
+    });
+}
+
+// --- SUBMIT ORDER & PROCESS ---
+if (el('submitOrder')) {
+    el('submitOrder').addEventListener('click', async function() {
+        const btn = this;
+        const refCode = el('mpesaCode').value.trim().toUpperCase();
+
+        if (selectedPaymentMethod === 'mpesa' && !validators.mpesa(refCode)) {
+            el('mpesaCodeError').innerText = "Valid transaction code required (at least 4 characters)";
+            el('mpesaCodeError').style.display = 'block';
+            return;
+        }
+        if (!refCode) {
+            alert("Please enter a reference code to confirm payment.");
+            return;
+        }
+
+        btn.innerText = "Processing Order...";
+        btn.disabled = true;
+
+        const cart = safeParseJSON(localStorage.getItem('cart'), []);
+        const templateItems = cart.map(i => {
+            const qty = Number(i.quantity || i.qty || 1);
+            const price = Number(i.price || 0);
+            return {
+                product: i.name || i.product || "Tea Packet",
+                qty: qty,
+                price: price,
+                total: price * qty
+            };
+        });
+
+        const totalVal = parseFloat(el('summaryTotal').innerText.replace(/[^0-9.]/g, '')) || 0;
+        const totalSum = totalVal ? totalVal.toLocaleString() : el('summaryTotal').innerText;
+        const orderId = el('displayOrderID').innerText || ('TR-' + Date.now());
+        const ADMIN_EMAIL = localStorage.getItem('tegat_admin_email') || "admin@torortea.co.ke";
+        const recipientEmail = el('email').value;
+        const templateId = Number(localStorage.getItem('tegat_email_template_id')) || 1;
+        const txnId = `${selectedPaymentMethod.toUpperCase()}: ${refCode}`;
+        const transportMethod = currentRegion === 'local' ? el('transportMeans').value : 'International Air Freight';
+        const gpsLocation = currentRegion === 'local' ? (el('location').value || el('county').value) : (el('address').value + ', ' + el('country').value);
+
+        const data = {
+            orderID: orderId,
+            transport: transportMethod,
+            gps: gpsLocation
+        };
+
+        const payload = {
+            token: SECRET_TOKEN,
+            sender: { "name": "Toror Tea Factory", "email": ADMIN_EMAIL },
+            to: [{ "email": recipientEmail }],
+            templateId: templateId,
+            params: {
+              "titleText": "NEW ORDER ALERT",
+              "welcomeMessage": "A new order has been received from the Toror Tea online store.",
+              "orderID": data.orderID || "N/A",
+              "paymentRef": txnId,
+              "transportMethod": data.transport || "Standard Delivery",
+              "gps": data.gps || "",
+              "items": templateItems,   // real array, never stringified
+              "totalSum": totalSum
+            },
+            // Backward-compatibility properties for sheet/GAS logger
+            orderID: orderId,
+            name: el('fullName').value,
+            email: recipientEmail,
+            phone: el('phoneNumber').value,
+            total: totalSum,
+            ref: txnId,
+            gps: gpsLocation,
+            transport: transportMethod,
+            items: templateItems
+        };
+
+        try {
+            let ordersArr = safeParseJSON(localStorage.getItem('tegat_orders'), []);
+            
+            const newOrder = {
+                id: payload.orderID,
+                date: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                name: payload.name,
+                customerName: payload.name,
+                email: payload.email,
+                customerEmail: payload.email,
+                phone: payload.phone,
+                customerPhone: payload.phone,
+                region: payload.gps,
+                deliveryLocation: payload.gps,
+                transport: payload.transport,
+                paymentMethod: selectedPaymentMethod.toUpperCase(),
+                paymentRef: refCode,
+                items: cart.map(ci => ({
+                    name: ci.name,
+                    qty: Number(ci.quantity || ci.qty || 1),
+                    price: Number(ci.price || 0),
+                    total: (Number(ci.price || 0) * Number(ci.quantity || ci.qty || 1))
+                })),
+                total: totalVal,
+                status: 'PAID & CONFIRMED',
+                source: 'Website Checkout'
+            };
+
+            ordersArr.unshift(newOrder);
+            localStorage.setItem('tegat_orders', JSON.stringify(ordersArr));
+
+            // Automatically Save to Live Firestore Database
+            if (window.TegatFirebase && typeof window.TegatFirebase.saveOrder === 'function') {
+                window.TegatFirebase.saveOrder(newOrder).catch(e => console.warn('[Firestore] Order sync warning:', e));
+            }
+
+            // Save active customer info
+            let cust = safeParseJSON(localStorage.getItem('tegat_customer_account'), {});
+            cust.name = payload.name;
+            cust.email = payload.email;
+            cust.phone = payload.phone;
+            localStorage.setItem('tegat_customer_account', JSON.stringify(cust));
+
+            // Automatically Save Customer Profile to Live Firestore Database
+            if (window.TegatFirebase && typeof window.TegatFirebase.saveUser === 'function') {
+                window.TegatFirebase.saveUser(cust).catch(e => console.warn('[Firestore] Customer sync warning:', e));
+            }
+
+            let currentCust = safeParseJSON(sessionStorage.getItem('tegat_current_customer'), {});
+            currentCust.name = payload.name;
+            currentCust.email = payload.email;
+            currentCust.phone = payload.phone;
+            if (!currentCust.country) currentCust.country = 'Kenya';
+            sessionStorage.setItem('tegat_current_customer', JSON.stringify(currentCust));
+            try { localStorage.removeItem('tegat_current_customer'); } catch(e) {}
+
+            // Send to Google Apps Script (background non-blocking)
+            const customGasUrl = localStorage.getItem('tegat_gas_script_url');
+            const targetGasUrl = customGasUrl || GOOGLE_SCRIPT_URL;
+
+            fetch(targetGasUrl, {
+                method: 'POST',
+                mode: 'no-cors', 
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(e => console.log('GAS sync:', e));
+
+            // Clear local cart
+            localStorage.removeItem('cart');
+
+            // Feedback and redirect to index with modal/receipt
+            el('modalBackdrop').style.display = 'none';
+            alert(`🎉 Payment & Order Confirmed Successfully!\n\nOrder Ref: ${payload.orderID}\nPayment Method: ${selectedPaymentMethod.toUpperCase()}\nReference: ${refCode}\nTotal: ${payload.total}\n\nYour order has been recorded into the Tegat Tea Factory Dispatch System.`);
+            
+            window.location.href = "index.html#account";
+            
+        } catch (err) {
+            console.error("Submission error:", err);
+            localStorage.removeItem('cart');
+            alert("Order Completed! Ref ID: " + orderId);
+            window.location.href = "index.html#account";
+        }
+    });
+}
+
+
+</script>
+</body>
+</html>

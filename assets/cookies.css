@@ -1,0 +1,244 @@
+/* Cookie Consent Banner & Modal Styles */
+.tegat-cookie-banner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    left: 20px;
+    max-width: 540px;
+    margin: 0 auto;
+    background: #1b2e21;
+    color: #f1f5f9;
+    padding: 20px 24px;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    z-index: 99999;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    animation: slideUpCookie 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpCookie {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tegat-cookie-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.tegat-cookie-header h4 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.tegat-cookie-body {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+}
+
+.tegat-cookie-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.tegat-cookie-btn-accept {
+    background: #d4af37;
+    color: #0f1c12;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tegat-cookie-btn-accept:hover {
+    background: #f7dc6f;
+    color: #0b2b0e;
+    transform: translateY(-1px);
+}
+
+.tegat-cookie-btn-essential {
+    background: rgba(255, 255, 255, 0.08);
+    color: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tegat-cookie-btn-essential:hover {
+    background: #0b2b0e;
+    color: #f7dc6f;
+    border-color: #f7dc6f;
+}
+
+.tegat-cookie-btn-settings {
+    background: transparent;
+    color: #94a3b8;
+    border: none;
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.tegat-cookie-btn-settings:hover {
+    color: #f7dc6f;
+}
+
+/* Modal Overlay */
+.tegat-cookie-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    padding: 16px;
+}
+
+.tegat-cookie-modal {
+    background: #ffffff;
+    color: #0f172a;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    animation: fadeInCookie 0.25s ease-out;
+}
+
+@keyframes fadeInCookie {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.tegat-cookie-modal-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0 0 6px 0;
+}
+
+.tegat-cookie-modal-desc {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.tegat-cookie-option {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.tegat-cookie-option-info {
+    max-width: 80%;
+}
+
+.tegat-cookie-option-info h5 {
+    margin: 0 0 3px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.tegat-cookie-option-info p {
+    margin: 0;
+    font-size: 12px;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+/* Switch styling */
+.tegat-switch {
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.tegat-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.tegat-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #cbd5e1;
+    transition: .2s;
+    border-radius: 24px;
+}
+
+.tegat-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .2s;
+    border-radius: 50%;
+}
+
+input:checked + .tegat-slider {
+    background-color: #16a34a;
+}
+
+input:checked + .tegat-slider:before {
+    transform: translateX(18px);
+}
+
+input:disabled + .tegat-slider {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.tegat-cookie-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid #e2e8f0;
+}
