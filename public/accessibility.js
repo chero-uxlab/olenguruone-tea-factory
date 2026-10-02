@@ -405,11 +405,11 @@
           '</div>' +
           '<div>' +
             '<h2 style="margin:0; font-size:22px; font-weight:800; color:var(--lux-green, #0b2b0e);">Accessibility Statement</h2>' +
-            '<p style="margin:0; font-size:13px; color:#64748b;">Tegat Tea Factory &bull; KTDA Unit 024</p>' +
+            '<p style="margin:0; font-size:13px; color:#64748b;">Olenguruone Tea Factory &bull; KTDA</p>' +
           '</div>' +
         '</div>' +
         '<div style="font-size:14.5px; color:#334155; line-height:1.65; display:flex; flex-direction:column; gap:14px;">' +
-          '<p><strong>Tegat Tea Factory (KTDA)</strong> strives to ensure that its online store and portal services are accessible to all people with disabilities. We have invested significant effort and technology to ensure our digital presence is inclusive, seamless, and dignified for every customer, farmer, and visitor.</p>' +
+          '<p><strong>Olenguruone Tea Factory (KTDA)</strong> strives to ensure that its online store and portal services are accessible to all people with disabilities. We have invested significant effort and technology to ensure our digital presence is inclusive, seamless, and dignified for every customer, farmer, and visitor.</p>' +
           '<h4 style="margin:8px 0 2px; color:var(--lux-green, #0b2b0e); font-size:16px;">Standards &amp; Conformance</h4>' +
           '<p>Our website utilizes dedicated accessibility controls and semantic markup to improve compliance with the <strong>Web Content Accessibility Guidelines (WCAG 2.1 Level AA)</strong>. These guidelines explain how to make web content more accessible for people with visual, cognitive, auditory, and motor disabilities.</p>' +
           '<h4 style="margin:8px 0 2px; color:var(--lux-green, #0b2b0e); font-size:16px;">Available Accessibility Tools</h4>' +
@@ -424,9 +424,9 @@
           '<h4 style="margin:8px 0 2px; color:var(--lux-green, #0b2b0e); font-size:16px;">Contact Support &amp; Feedback</h4>' +
           '<p>If you encounter any accessibility barrier or have questions regarding our website, please reach out directly to our customer and factory dispatch team:</p>' +
           '<div style="background:#f8fafc; border:1.5px solid #e2e0d8; border-radius:10px; padding:12px 16px; font-size:13.5px;">' +
-            '<p style="margin:0 0 6px 0;"><strong>Factory Email:</strong> <a href="mailto:Info@tegat.ktdateas.com" style="color:var(--lux-green, #0b2b0e); font-weight:700; text-decoration:underline;">Info@tegat.ktdateas.com</a></p>' +
+            '<p style="margin:0 0 6px 0;"><strong>Factory Email:</strong> <a href="mailto:info@olenguruone.ktdateas.com" style="color:var(--lux-green, #0b2b0e); font-weight:700; text-decoration:underline;">info@olenguruone.ktdateas.com</a></p>' +
             '<p style="margin:0 0 6px 0;"><strong>Customer Care Phone:</strong> <a href="tel:+254723121163" style="color:var(--lux-green, #0b2b0e); font-weight:700; text-decoration:underline;">+254 723 121 163</a></p>' +
-            '<p style="margin:0;"><strong>Location:</strong> Kericho / Sotik Rd, P.O. Box 426, Kericho, Kenya</p>' +
+            '<p style="margin:0;"><strong>Location:</strong> Olenguruone, Kuresoi South, Nakuru County, Kenya</p>' +
           '</div>' +
         '</div>' +
       '</div>';

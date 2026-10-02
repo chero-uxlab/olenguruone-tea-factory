@@ -1,5 +1,5 @@
 /**
- * Tegat Tea Factory - Cookie Consent & Preference Manager
+ * Olenguruone Tea Factory - Cookie Consent & Preference Manager
  */
 (function() {
     const COOKIE_STORAGE_KEY = 'tegat_cookie_consent';
@@ -61,7 +61,7 @@
             <div class="tegat-cookie-modal">
                 <h4 class="tegat-cookie-modal-title">Cookie Preferences</h4>
                 <p class="tegat-cookie-modal-desc">
-                    Tegat Tea Factory uses cookies to ensure security, maintain shopping cart state, and improve site performance for domestic & export clients.
+                    Olenguruone Tea Factory uses cookies to ensure security, maintain shopping cart state, and improve site performance for domestic & export clients.
                 </p>
 
                 <div class="tegat-cookie-option">

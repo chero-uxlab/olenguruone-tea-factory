@@ -2,10 +2,22 @@
 <html lang="en">
 <head>
   <script>
-    (function(){var o=JSON.parse;JSON.parse=function(t,r){if(t===undefined||t===null||t==='undefined'||t==='null'||t===''||t==='NaN')return null;try{return o(t,r)}catch(e){if(typeof t==='string'&&(t.indexOf('undefined')!==-1||t.indexOf('null')!==-1||t.trim()===''))return null;throw e}};try{if(typeof localStorage!=='undefined'){for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(k){var v=localStorage.getItem(k);if(v==='undefined'||v==='null'||v==='NaN')localStorage.removeItem(k)}}}}catch(e){}})();
+    try {
+      if (typeof localStorage !== 'undefined') {
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (k) {
+            var v = localStorage.getItem(k);
+            if (v === 'undefined' || v === 'null' || v === 'NaN' || v === '') {
+              localStorage.removeItem(k);
+            }
+          }
+        }
+      }
+    } catch(e) {}
   </script>
   <meta charset="UTF-8" />
-  <title>Factory Management Portal — Tegat Tea Factory</title>
+  <title>Factory Management Portal — Olenguruone Tea Factory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1082,7 +1094,7 @@
   <div id="loginGate">
     <div class="login-card">
       <div class="login-logo">
-        <img src="assets/tegat_logo.png" alt="Tegat Logo">
+        <img src="assets/tegat_logo.png" alt="Olenguruone Logo">
       </div>
       
       <h2>Factory Portal Sign In</h2>
@@ -1153,7 +1165,7 @@
             Verifying 2FA for Joan Cherotich
           </div>
           <div style="font-size: 12px; color: var(--muted-text);" id="2faPhoneText">
-            Security code dispatched to j.cherotich@tegatteafactory.co.ke
+            Security code dispatched to j.cherotich@olenguruonetea.co.ke
           </div>
         </div>
 
@@ -1195,9 +1207,9 @@
     <!-- SIDEBAR NAV -->
     <aside class="admin-sidebar">
       <div class="sidebar-header">
-        <img src="assets/tegat_logo.png" alt="Tegat Tea Logo">
+        <img src="assets/tegat_logo.png" alt="Olenguruone Tea Logo">
         <div class="sidebar-header-text">
-          <h1>Tegat Factory</h1>
+          <h1>Olenguruone Factory</h1>
           <span>Operations Admin</span>
         </div>
         <button type="button" class="btn-toggle-sidebar" id="btnToggleSidebar" onclick="toggleSidebarCollapse()" title="Toggle Sidebar Width">
@@ -1292,7 +1304,7 @@
       <header class="admin-topbar">
         <div class="topbar-title">
           <h2 id="pageTitle">Platform Sales Operations Portal</h2>
-          <p id="pageSub">Tegat Tea Factory — E-Commerce Orders & Customer Dispatch Hub</p>
+          <p id="pageSub">Olenguruone Tea Factory — E-Commerce Orders &amp; Customer Dispatch Hub</p>
         </div>
         <div class="topbar-actions">
           <button type="button" class="global-search-btn" onclick="openGlobalSearchModal()" title="Search Everything (Ctrl + K)">
@@ -2051,7 +2063,7 @@
         </div>
         <div class="form-group">
           <label>Staff Email (for 2FA Code)</label>
-          <input type="email" id="uEmail" required placeholder="user@tegatteafactory.co.ke">
+          <input type="email" id="uEmail" required placeholder="user@olenguruonetea.co.ke">
         </div>
         <div class="form-group">
           <label>Contact Phone Number</label>
@@ -2101,7 +2113,7 @@
       </div>
 
       <div style="font-size: 13.5px; color: var(--text-color); line-height: 1.5; margin-bottom: 18px;">
-        Connect your Google Sheet directly to Tegat Tea Factory portal. Orders placed on the website or managed in this dashboard will automatically sync with Google Sheets!
+        Connect your Google Sheet directly to Olenguruone Tea Factory portal. Orders placed on the website or managed in this dashboard will automatically sync with Google Sheets!
       </div>
 
       <div class="form-group" style="margin-bottom: 20px;">
@@ -2297,7 +2309,7 @@ function doPost(e) {
       {
         username: 'superadmin',
         name: 'Joan Cherotich',
-        email: 'j.cherotich@tegatteafactory.co.ke',
+        email: 'j.cherotich@olenguruonetea.co.ke',
         role: 'superadmin',
         pin: '2026',
         phone: '+254 712 345 678',
@@ -2307,7 +2319,7 @@ function doPost(e) {
       {
         username: 'f_manager',
         name: 'Janet Chepkorir',
-        email: 'j.chepkorir@tegatteafactory.co.ke',
+        email: 'j.chepkorir@olenguruonetea.co.ke',
         role: 'f_manager',
         pin: '1234',
         phone: '+254 722 888 999',
@@ -2317,7 +2329,7 @@ function doPost(e) {
       {
         username: 'dispatch_clerk',
         name: 'Peter Cheruiyot',
-        email: 'p.cheruiyot@tegatteafactory.co.ke',
+        email: 'p.cheruiyot@olenguruonetea.co.ke',
         role: 'dispatch_clerk',
         pin: '5678',
         phone: '+254 733 111 222',
@@ -2327,7 +2339,7 @@ function doPost(e) {
       {
         username: 'quality_officer',
         name: 'Grace Bett',
-        email: 'g.bett@tegatteafactory.co.ke',
+        email: 'g.bett@olenguruonetea.co.ke',
         role: 'quality_officer',
         pin: '9012',
         phone: '+254 701 444 555',
@@ -2376,7 +2388,7 @@ function doPost(e) {
         id: 'TGT-84918',
         date: '2026-08-07 16:45',
         name: 'Samuel Rotich',
-        email: 's.rotich@tegatlogistics.co.ke',
+        email: 's.rotich@olenguruonelogistics.co.ke',
         phone: '+254 701 112 233',
         region: 'Mombasa Port Export Hub',
         transport: 'Container Fleet',
@@ -2407,7 +2419,7 @@ function doPost(e) {
       }
     ];
 
-    // Initial Mock Products Data (Tegat Retail Shop Products Only)
+    // Initial Mock Products Data (Olenguruone Retail Shop Products Only)
     const SAMPLE_PRODUCTS = [
       { id: 'p1', name: 'Black Tea – Net Weight:25g', category: 'Black Tea', price: 17, stock: 1500, status: 'In Stock' },
       { id: 'p2', name: 'Black Tea – Net Weight:50g', category: 'Black Tea', price: 17, stock: 1200, status: 'In Stock' },
@@ -2445,7 +2457,7 @@ function doPost(e) {
         role: 'Quality Inspector',
         module: 'Leaf',
         action: 'Green Leaf Log Added',
-        details: 'Recorded 18,500 Kg delivery at Tegat Center A (Rejection: 1.2%)'
+        details: 'Recorded 18,500 Kg delivery at Olenguruone Center A (Rejection: 1.2%)'
       }
     ];
 
@@ -2956,7 +2968,7 @@ function doPost(e) {
         document.getElementById('badgeStep1').className = 'step-badge completed';
         document.getElementById('badgeStep2').className = 'step-badge active';
         
-        const userEmail = user.email || (user.username + '@tegatteafactory.co.ke');
+        const userEmail = user.email || (user.username + '@olenguruonetea.co.ke');
         document.getElementById('2faUserHeading').textContent = `Verifying 2FA for ${user.name}`;
         const phoneEl = document.getElementById('2faPhoneText');
         if (phoneEl) {
@@ -2985,7 +2997,7 @@ function doPost(e) {
     function regenerate2FACode() {
       currentGeneratedOtp = Math.floor(100000 + Math.random() * 900000).toString();
       document.getElementById('generatedOtpDisplay').textContent = currentGeneratedOtp.slice(0,3) + ' ' + currentGeneratedOtp.slice(3);
-      const userEmail = pendingLoginUser?.email || (pendingLoginUser?.username + '@tegatteafactory.co.ke');
+      const userEmail = pendingLoginUser?.email || (pendingLoginUser?.username + '@olenguruonetea.co.ke');
       showToast(`New 2FA Code dispatched to ${maskEmail(userEmail)}!`);
     }
 
@@ -3345,7 +3357,7 @@ function doPost(e) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Tegat_Selected_Manifest_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `Olenguruone_Selected_Manifest_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
       showToast(`Exported ${orders.length} selected orders.`);
     }
@@ -3466,7 +3478,7 @@ function doPost(e) {
             <strong>Phone:</strong> ${escapeHtml(o.phone)}<br>
             <strong>Email:</strong> ${escapeHtml(o.email || 'N/A')}<br>
             <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-              ${phoneRaw ? `<a href="https://wa.me/${waPhone}?text=Hello%20${encodeURIComponent(o.name)}%2C%20regarding%20your%20Tegat%20Tea%20Order%20${o.id}" target="_blank" class="btn-action" style="background:#25D366; color:#fff; border:none; padding:5px 12px; font-size:11.5px; font-weight:700; display:inline-flex; align-items:center; gap:4px; text-decoration:none; border-radius:6px;">
+              ${phoneRaw ? `<a href="https://wa.me/${waPhone}?text=Hello%20${encodeURIComponent(o.name)}%2C%20regarding%20your%20Olenguruone%20Tea%20Order%20${o.id}" target="_blank" class="btn-action" style="background:#25D366; color:#fff; border:none; padding:5px 12px; font-size:11.5px; font-weight:700; display:inline-flex; align-items:center; gap:4px; text-decoration:none; border-radius:6px;">
                 💬 WhatsApp Dispatch
               </a>` : ''}
               ${o.phone ? `<a href="tel:${o.phone}" class="btn-action" style="padding:5px 12px; font-size:11.5px; font-weight:700; text-decoration:none;">📞 Direct Call</a>` : ''}
@@ -3537,7 +3549,7 @@ function doPost(e) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Tegat_Factory_Orders_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `Olenguruone_Factory_Orders_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
       logAuditEvent('Orders', 'Exported Orders CSV', `Exported ${orders.length} order records to CSV.`);
       showToast('Orders exported to CSV.');
@@ -3656,7 +3668,7 @@ function doPost(e) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Tegat_Factory_Inventory_${new Date().toISOString().slice(0,10)}.csv`;
+      a.download = `Olenguruone_Factory_Inventory_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
       showToast('Inventory catalog exported to CSV.');
     }
@@ -3740,7 +3752,7 @@ function doPost(e) {
         <tr>
           <td><strong>${escapeHtml(u.name)}</strong></td>
           <td><code>${escapeHtml(u.username)}</code></td>
-          <td><small style="color:var(--lux-green); font-weight:600;">${escapeHtml(u.email || (u.username + '@tegatteafactory.co.ke'))}</small></td>
+          <td><small style="color:var(--lux-green); font-weight:600;">${escapeHtml(u.email || (u.username + '@olenguruonetea.co.ke'))}</small></td>
           <td><span class="user-role-badge ${getRoleBadgeClass(u.role)}">${getRoleTitle(u.role)}</span></td>
           <td>${u.enforce2fa ? '🔒 Enforced (Email 2FA)' : '⚠️ Disabled'}</td>
           <td>${escapeHtml(u.phone || 'N/A')}</td>
@@ -3784,7 +3796,7 @@ function doPost(e) {
       document.getElementById('uUsername').value = u.username;
       document.getElementById('uRole').value = u.role;
       document.getElementById('uPin').value = u.pin;
-      document.getElementById('uEmail').value = u.email || (u.username + '@tegatteafactory.co.ke');
+      document.getElementById('uEmail').value = u.email || (u.username + '@olenguruonetea.co.ke');
       document.getElementById('uPhone').value = u.phone || '';
       document.getElementById('u2fa').checked = !!u.enforce2fa;
 
@@ -3896,7 +3908,7 @@ function doPost(e) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Tegat_Factory_AuditTrail_${new Date().toISOString().slice(0,10)}.csv`;
+        a.download = `Olenguruone_Factory_AuditTrail_${new Date().toISOString().slice(0,10)}.csv`;
         a.click();
         showToast('Audit trail exported to CSV.');
       });
@@ -4047,11 +4059,11 @@ function doPost(e) {
       if (!tbody) return;
 
       const defaultReviews = [
-        { authorName: "Mark Al-Nuaimi", authorLocation: "Dubai, UAE", authorRole: "Wholesale Importer", productGrade: "BP1 — Broken Pekoe 1", rating: 5, title: "Unrivaled Briskness and Spotless Packaging", comment: "We import 4 forty-foot containers per quarter into Dubai. Tegat's CTC BP1 consistently delivers unmatched briskness and clean granular uniformity.", helpfulVotes: 38, date: "2026-03-14" },
-        { authorName: "Dr. Sofia Reynolds", authorLocation: "Boston, USA", authorRole: "Master Tea Blender", productGrade: "PF1 — Pekoe Fannings 1", rating: 5, title: "Exceptional Cup Brightness for Premium Blends", comment: "The high-altitude terroir of Kericho highlands shows in every liquor test. Great cup brightness.", helpfulVotes: 29, date: "2026-03-02" },
-        { authorName: "Liam van der Merwe", authorLocation: "Cape Town, SA", authorRole: "Commercial Wholesaler", productGrade: "PD — Pekoe Dust", rating: 5, title: "Rapid Infusion & Outstanding Liquoring Strength", comment: "For fast commercial bagging, Tegat Pekoe Dust is second to none in Sub-Saharan Africa.", helpfulVotes: 21, date: "2026-02-18" },
-        { authorName: "Nadia Mansour", authorLocation: "Alexandria, Egypt", authorRole: "Senior Sourcing Director", productGrade: "D1 — Dust 1 & BP1", rating: 5, title: "Consistent High-Yield Quality Year After Year", comment: "Egyptian consumers demand strong, dark, brisk tea. Tegat Tea Factory has been our steadfast partner.", helpfulVotes: 44, date: "2026-01-28" },
-        { authorName: "Kiprono Cheruiyot", authorLocation: "Kericho, Kenya", authorRole: "Retail Connoisseur", productGrade: "Classic 500g & Tangawizi", rating: 5, title: "The Pride of Kericho", comment: "The Tangawizi ginger blend is aromatic and warming, while the Classic 500g has that fresh highland aroma.", helpfulVotes: 19, date: "2026-03-20" },
+        { authorName: "Mark Al-Nuaimi", authorLocation: "Dubai, UAE", authorRole: "Wholesale Importer", productGrade: "BP1 — Broken Pekoe 1", rating: 5, title: "Unrivaled Briskness and Spotless Packaging", comment: "We import 4 forty-foot containers per quarter into Dubai. Olenguruone's CTC BP1 consistently delivers unmatched briskness and clean granular uniformity.", helpfulVotes: 38, date: "2026-03-14" },
+        { authorName: "Dr. Sofia Reynolds", authorLocation: "Boston, USA", authorRole: "Master Tea Blender", productGrade: "PF1 — Pekoe Fannings 1", rating: 5, title: "Exceptional Cup Brightness for Premium Blends", comment: "The high-altitude terroir of Kenyan highlands shows in every liquor test. Great cup brightness.", helpfulVotes: 29, date: "2026-03-02" },
+        { authorName: "Liam van der Merwe", authorLocation: "Cape Town, SA", authorRole: "Commercial Wholesaler", productGrade: "PD — Pekoe Dust", rating: 5, title: "Rapid Infusion & Outstanding Liquoring Strength", comment: "For fast commercial bagging, Olenguruone Pekoe Dust is second to none in Sub-Saharan Africa.", helpfulVotes: 21, date: "2026-02-18" },
+        { authorName: "Nadia Mansour", authorLocation: "Alexandria, Egypt", authorRole: "Senior Sourcing Director", productGrade: "D1 — Dust 1 & BP1", rating: 5, title: "Consistent High-Yield Quality Year After Year", comment: "Egyptian consumers demand strong, dark, brisk tea. Olenguruone Tea Factory has been our steadfast partner.", helpfulVotes: 44, date: "2026-01-28" },
+        { authorName: "Kiprono Cheruiyot", authorLocation: "Nakuru, Kenya", authorRole: "Retail Connoisseur", productGrade: "Classic 500g & Tangawizi", rating: 5, title: "The Pride of the Highlands", comment: "The Tangawizi ginger blend is aromatic and warming, while the Classic 500g has that fresh highland aroma.", helpfulVotes: 19, date: "2026-03-20" },
         { authorName: "Hans-Jürgen Weber", authorLocation: "Hamburg, Germany", authorRole: "Compliance Director", productGrade: "BP1 Single Estate", rating: 5, title: "Strict Rainforest Alliance Compliance", comment: "Rainforest Alliance chain-of-custody certificates and lab test reports are always pristine.", helpfulVotes: 16, date: "2026-02-11" },
         { authorName: "Amina Hassan", authorLocation: "London, UK", authorRole: "Hospitality Purveyor", productGrade: "PF1 Enveloped Bags", rating: 5, title: "Supreme Freshness and Superior Aroma", comment: "Our luxury hotel clients across London rave about the fresh aroma and bold body.", helpfulVotes: 25, date: "2026-03-08" },
         { authorName: "Tariq Javed", authorLocation: "Karachi, Pakistan", authorRole: "Bulk Importer", productGrade: "PD Pekoe Dust", rating: 4, title: "Excellent Body and Liquoring Depth", comment: "Substantial liquor body and quick color development. Very competitive pricing on CIF contracts.", helpfulVotes: 12, date: "2026-01-15" }
@@ -4128,7 +4140,7 @@ function doPost(e) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Tegat_Tea_CustomerDatabase_${new Date().toISOString().slice(0,10)}.csv`;
+        a.download = `Olenguruone_Tea_CustomerDatabase_${new Date().toISOString().slice(0,10)}.csv`;
         a.click();
         showToast('Customer database exported to CSV!');
         logAuditEvent('Customers', 'Exported Customer Contacts CSV', `Exported ${customers.length} customer records to CSV file.`);
@@ -4152,7 +4164,7 @@ function doPost(e) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Tegat_Tea_EmailSubscribers_${new Date().toISOString().slice(0,10)}.csv`;
+        a.download = `Olenguruone_Tea_EmailSubscribers_${new Date().toISOString().slice(0,10)}.csv`;
         a.click();
         showToast('Email subscribers exported to CSV!');
         logAuditEvent('Newsletter', 'Exported Subscribers CSV', `Exported ${subs.length} email subscriber contacts to CSV file.`);

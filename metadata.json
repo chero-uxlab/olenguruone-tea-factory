@@ -1,6 +1,6 @@
 {
-  "name": "Tegat Tea Factory",
-  "description": "Tegat Tea Factory website, shop, and standalone management portal",
+  "name": "Olenguruone Tea Factory",
+  "description": "Olenguruone Tea Factory website, shop, and standalone management portal",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

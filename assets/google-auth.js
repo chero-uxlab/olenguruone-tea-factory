@@ -1,5 +1,5 @@
 /**
- * TEGAT TEA FACTORY - GOOGLE IDENTITY SERVICES & ONE-TAP AUTHENTICATION
+ * OLENGURUONE TEA FACTORY - GOOGLE IDENTITY SERVICES & ONE-TAP AUTHENTICATION
  * Handles Google One Tap, Google Sign-In button rendering, JWT token decoding,
  * and persistent session creation for customer & staff portals.
  */
@@ -204,7 +204,7 @@
         '<div style="padding:22px 24px;">' +
           '<div style="text-align:center; margin-bottom:18px;">' +
             '<img src="./assets/tegat_logo.png" style="height:36px; margin-bottom:8px;">' +
-            '<h3 style="margin:0 0 4px; font-size:17px; color:#0b2b0e; font-weight:800;">Tegat Tea Factory Portal</h3>' +
+            '<h3 style="margin:0 0 4px; font-size:17px; color:#0b2b0e; font-weight:800;">Olenguruone Tea Factory Portal</h3>' +
             '<p style="margin:0; font-size:13px; color:#5f6368;">Choose your Google account to continue</p>' +
           '</div>' +
 
@@ -238,7 +238,7 @@
 
         '<!-- Footer -->' +
         '<div style="background:#f8f9fa; padding:12px 24px; border-top:1px solid #f0f0f0; font-size:11.5px; color:#70757a; text-align:center;">' +
-          'Protected by Google Identity Services • Tegat Tea Factory Security' +
+          'Protected by Google Identity Services • Olenguruone Tea Factory Security' +
         '</div>' +
       '</div>';
 

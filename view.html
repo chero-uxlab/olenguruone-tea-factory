@@ -2,10 +2,22 @@
 <html lang="en">
 <head>
   <script>
-    (function(){var o=JSON.parse;JSON.parse=function(t,r){if(t===undefined||t===null||t==='undefined'||t==='null'||t===''||t==='NaN')return null;try{return o(t,r)}catch(e){if(typeof t==='string'&&(t.indexOf('undefined')!==-1||t.indexOf('null')!==-1||t.trim()===''))return null;throw e}};try{if(typeof localStorage!=='undefined'){for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(k){var v=localStorage.getItem(k);if(v==='undefined'||v==='null'||v==='NaN')localStorage.removeItem(k)}}}}catch(e){}})();
+    try {
+      if (typeof localStorage !== 'undefined') {
+        for (var i = localStorage.length - 1; i >= 0; i--) {
+          var k = localStorage.key(i);
+          if (k) {
+            var v = localStorage.getItem(k);
+            if (v === 'undefined' || v === 'null' || v === 'NaN' || v === '') {
+              localStorage.removeItem(k);
+            }
+          }
+        }
+      }
+    } catch(e) {}
   </script>
   <meta charset="UTF-8" />
-  <title>Your Cart – Tegat Tea Factory</title>
+  <title>Your Cart – Olenguruone Tea Factory</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/cookies.css">
   <link rel="stylesheet" href="assets/theme.css">
@@ -664,8 +676,8 @@ table td[data-label="Product"] {
 <div class="navbar">
   <div class="nav-left">
     <a href="index.html" class="logo-area" style="text-decoration:none; color:inherit;">
-      <img src="assets/tegat_logo.png" alt="Tegat Tea logo">
-      <span>Tegat Tea Factory</span>
+      <img src="assets/tegat_logo.png" alt="Olenguruone Tea logo">
+      <span>Olenguruone Tea Factory</span>
     </a>
 
     <div class="nav-links" id="navLinks">
@@ -755,11 +767,11 @@ table td[data-label="Product"] {
   <div class="footer-container">
     <div class="footer-col footer-col-brand">
       <div class="footer-logos">
-        <img src="assets/tegat_logo.png" alt="Tegat Tea Logo" class="footer-logo">
+        <img src="assets/tegat_logo.png" alt="Olenguruone Tea Logo" class="footer-logo">
         <img src="assets/ktda_logo.png" alt="KTDA Logo" class="footer-logo" referrerPolicy="no-referrer">
       </div>
-      <h3>Tegat Tea Factory</h3>
-      <p class="footer-tagline">Producers of world-class Kenyan Black CTC & Specialty Teas in Kericho Highlands.</p>
+      <h3>Olenguruone Tea Factory</h3>
+      <p class="footer-tagline">Producers of world-class Kenyan Black CTC &amp; Specialty Teas in Rift Valley Highlands.</p>
       <div class="cert-pills">
         <span class="cert-badge">ISO 22000</span>
         <span class="cert-badge">Rainforest Alliance</span>
@@ -778,9 +790,9 @@ table td[data-label="Product"] {
 
     <div class="footer-col">
       <h4>Factory &amp; Contacts</h4>
-      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Kericho, Highlands Region, Kenya</p>
+      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Olenguruone, Highlands Region, Kenya</p>
       <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+254 723 121 163</p>
-      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Info@tegat.ktdateas.com</p>
+      <p><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Info@olenguruone.ktdateas.com</p>
       <div class="footer-hours"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mon - Sat: 8:00 AM - 5:00 PM EAT</div>
     </div>
 
@@ -817,13 +829,13 @@ table td[data-label="Product"] {
         <button type="submit">Subscribe</button>
       </form>
       <div id="footerSubSuccess" class="news-success">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg>Thank you for subscribing to Tegat Tea Factory updates!
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg>Thank you for subscribing to Olenguruone Tea Factory updates!
       </div>
     </div>
   </div>
 
   <div class="footer-bottom">
-    <div>© 2026 Tegat Tea Factory Company Ltd. All Rights Reserved.</div>
+    <div>© 2026 Olenguruone Tea Factory Company Ltd. All Rights Reserved.</div>
     <div class="footer-legal">
       <a href="index.html">Privacy Policy</a>
       <a href="index.html">Terms of Supply</a>

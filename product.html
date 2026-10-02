@@ -2,7 +2,19 @@
 <html lang="en">
 <head>
 <script>
-  (function(){var o=JSON.parse;JSON.parse=function(t,r){if(t===undefined||t===null||t==='undefined'||t==='null'||t===''||t==='NaN')return null;try{return o(t,r)}catch(e){if(typeof t==='string'&&(t.indexOf('undefined')!==-1||t.indexOf('null')!==-1||t.trim()===''))return null;throw e}};try{if(typeof localStorage!=='undefined'){for(var i=localStorage.length-1;i>=0;i--){var k=localStorage.key(i);if(k){var v=localStorage.getItem(k);if(v==='undefined'||v==='null'||v==='NaN')localStorage.removeItem(k)}}}}catch(e){}})();
+  try {
+    if (typeof localStorage !== 'undefined') {
+      for (var i = localStorage.length - 1; i >= 0; i--) {
+        var k = localStorage.key(i);
+        if (k) {
+          var v = localStorage.getItem(k);
+          if (v === 'undefined' || v === 'null' || v === 'NaN' || v === '') {
+            localStorage.removeItem(k);
+          }
+        }
+      }
+    }
+  } catch(e) {}
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

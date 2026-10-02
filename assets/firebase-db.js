@@ -346,5 +346,8 @@ window.TegatFirebase = {
   }
 };
 
-// Dispatch custom event indicating TegatFirebase is loaded and ready
+window.OlenguruoneFirebase = window.TegatFirebase;
+
+// Dispatch custom event indicating TegatFirebase and OlenguruoneFirebase is loaded and ready
+window.dispatchEvent(new CustomEvent("olenguruone:firebase-ready", { detail: window.TegatFirebase }));
 window.dispatchEvent(new CustomEvent("tegat:firebase-ready", { detail: window.TegatFirebase }));
