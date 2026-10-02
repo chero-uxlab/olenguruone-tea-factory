@@ -7,10 +7,13 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     hmr: false,
-    watch: null,
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
+    strictPort: false,
   },
   build: {
-    base: './',
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
