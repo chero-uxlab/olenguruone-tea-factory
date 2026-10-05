@@ -965,30 +965,41 @@ filter:brightness(1.8) contrast(1.3) saturate(1.5);
 .desk-form-success .check{width:52px;height:52px;border-radius:50%;background:rgba(11,43,14,0.08);color:var(--lux-green);display:flex;align-items:center;justify-content:center;font-size:26px}
 .desk-form-success h4{margin:4px 0 0;color:var(--lux-green);font-family:'Playfair Display',serif;font-size:19px}
 .desk-form-success p{margin:0;color:var(--muted);font-size:14px;max-width:36ch}
- .footer{position:relative;background:linear-gradient(180deg,#0b2b0e,#08210b);color:rgba(247,220,111,0.85);padding:64px 24px 0;margin-top:40px;overflow:hidden}
+ .footer{position:relative;background:linear-gradient(180deg,#0a260c,#051507);color:rgba(247,220,111,0.88);padding:64px 24px 0;margin-top:40px;overflow:hidden}
 .footer::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,var(--lux-gold),var(--yellow),var(--lux-gold),transparent)}
-.footer-container{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;max-width:1200px;margin:0 auto}
-@media(max-width:920px){.footer-container{grid-template-columns:1fr 1fr;gap:36px 28px}}
-@media(max-width:560px){.footer-container{grid-template-columns:1fr;gap:32px}}
+.footer-container{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.25fr;gap:36px 22px;max-width:1280px;margin:0 auto}
+@media(max-width:1150px){.footer-container{grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px 20px}}
+@media(max-width:920px){.footer-container{grid-template-columns:1fr 1fr;gap:36px 24px}}
+@media(max-width:560px){.footer-container{grid-template-columns:1fr;gap:30px}}
 .footer-brand{grid-column:span 1}
-.footer-logo{height:52px;width:auto;max-width:110px;object-fit:contain;background:#fff;padding:5px;border-radius:8px;margin-bottom:14px;box-shadow:0 8px 20px rgba(0,0,0,0.25)}
-.footer-brand h3{margin:0;font-family:'Playfair Display',serif;font-size:20px;color:var(--yellow);letter-spacing:0.4px}
-.footer-brand p{margin:8px 0 0;font-size:14px;line-height:1.6;color:rgba(247,220,111,0.65);max-width:32ch}
-.footer-col h4{margin:0 0 16px;font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--yellow);letter-spacing:0.6px;text-transform:uppercase;position:relative;padding-bottom:10px}
+.footer-logo{height:54px;width:auto;max-width:115px;object-fit:contain;background:#fff;padding:6px;border-radius:10px;margin-bottom:12px;box-shadow:0 8px 24px rgba(0,0,0,0.3);border:1px solid rgba(247,220,111,0.3)}
+.footer-brand h3{margin:0;font-family:'Playfair Display',serif;font-size:21px;color:var(--yellow);letter-spacing:0.3px;line-height:1.25}
+.footer-brand .factory-tag{display:inline-block;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--lux-gold);font-weight:700;margin-top:4px;margin-bottom:8px}
+.footer-brand p{margin:6px 0 14px;font-size:13px;line-height:1.65;color:rgba(247,220,111,0.72);max-width:36ch}
+.footer-badges{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px}
+.footer-badge-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border:1px solid rgba(247,220,111,0.25);border-radius:16px;padding:3px 9px;font-size:11px;color:var(--yellow);font-weight:600}
+.footer-badge-pill img{height:14px;width:auto;object-fit:contain;border-radius:2px;background:#fff;padding:1px}
+.footer-col h4{margin:0 0 16px;font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--yellow);letter-spacing:0.6px;text-transform:uppercase;position:relative;padding-bottom:10px}
 .footer-col h4::after{content:'';position:absolute;left:0;bottom:0;width:28px;height:2px;background:var(--lux-gold)}
-.footer-col a.footer-link{display:flex;align-items:center;gap:0;color:rgba(247,220,111,0.72);font-size:14px;padding:6px 0;transition:color .2s ease,padding-left .2s ease}
-.footer-col a.footer-link:hover{color:var(--yellow);padding-left:6px}
-.footer-col address,.footer-col p{font-style:normal;font-size:14px;line-height:1.7;color:rgba(247,220,111,0.72);margin:0 0 6px}
-.footer-col a.footer-contact{display:block;color:rgba(247,220,111,0.72);font-size:14px;line-height:1.7;transition:color .2s ease}
-.footer-col a.footer-contact:hover{color:var(--yellow)}
-.social-icons a{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;border:1px solid rgba(247,220,111,0.28);transition:background .2s ease,border-color .2s ease,transform .2s ease}
-.social-icons a:hover{background:var(--yellow);border-color:var(--yellow);transform:translateY(-3px)}
-.social-icons a:hover svg{stroke:var(--lux-green)}
-.footer-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;max-width:1200px;margin:44px auto 0;padding:20px 0;border-top:1px solid rgba(247,220,111,0.15);font-size:13px;color:rgba(247,220,111,0.55)}
-.footer-legal{display:flex;gap:20px;flex-wrap:wrap}
-.footer-legal a{color:rgba(247,220,111,0.55);transition:color .2s ease}
-.footer-legal a:hover{color:var(--yellow)}
-@media(max-width:560px){.footer-bottom{justify-content:center;text-align:center}}
+.footer-col a.footer-link{display:flex;align-items:center;gap:6px;color:rgba(247,220,111,0.72);font-size:13.5px;padding:4.5px 0;transition:all .2s ease;text-decoration:none}
+.footer-col a.footer-link:hover{color:var(--yellow);padding-left:5px}
+.footer-col a.footer-link .link-arrow{color:var(--lux-gold);font-size:11px;opacity:0.6;transition:opacity .2s ease}
+.footer-col a.footer-link:hover .link-arrow{opacity:1}
+.footer-col address,.footer-col p{font-style:normal;font-size:13px;line-height:1.65;color:rgba(247,220,111,0.72);margin:0 0 8px}
+.footer-contact-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;line-height:1.45}
+.footer-contact-item .ci{color:var(--yellow);flex-shrink:0;margin-top:2px}
+.footer-col a.footer-contact{display:inline-block;color:rgba(247,220,111,0.78);font-size:13px;line-height:1.45;transition:color .2s ease;word-break:break-word}
+.footer-col a.footer-contact:hover{color:var(--yellow);text-decoration:underline}
+.social-icons a{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid rgba(247,220,111,0.28);background:rgba(255,255,255,0.04);transition:all .2s ease;color:var(--yellow)}
+.social-icons a:hover{background:var(--yellow);border-color:var(--yellow);color:var(--lux-green);transform:translateY(-3px)}
+.social-icons a:hover svg{stroke:var(--lux-green);fill:none}
+.footer-bottom{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;max-width:1280px;margin:40px auto 0;padding:22px 0 28px;border-top:1px solid rgba(247,220,111,0.18);font-size:12.5px;color:rgba(247,220,111,0.6)}
+.footer-legal{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.footer-legal a{color:rgba(247,220,111,0.65);transition:color .2s ease;cursor:pointer}
+.footer-legal a:hover{color:var(--yellow);text-decoration:underline}
+.back-to-top-btn{display:inline-flex;align-items:center;gap:6px;background:rgba(247,220,111,0.12);border:1px solid rgba(247,220,111,0.3);color:var(--yellow);padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s ease}
+.back-to-top-btn:hover{background:var(--yellow);color:var(--lux-green);transform:translateY(-2px)}
+@media(max-width:560px){.footer-bottom{justify-content:center;text-align:center;flex-direction:column;gap:16px}.footer-legal{justify-content:center}}
 /* Enhanced Reviews & Testimonials Section */
 #reviews .section-title {
   text-align: center;
@@ -4114,82 +4125,240 @@ j
   </div>
 </section>
   </main>
-<footer class="footer">
+<footer class="footer" id="factory-footer" role="contentinfo">
   <div class="footer-container">
+    <!-- BRAND & ORIGIN COLUMN -->
     <div class="footer-brand">
-      <img src="./assets/tegat_logo.png" class="footer-logo" alt="Olenguruone Tea Factory logo">
+      <img src="./assets/olenguruone_logo.png" class="footer-logo" alt="Olenguruone Tea Factory Co. Ltd Official Seal">
       <h3>Olenguruone Tea Factory</h3>
-      <p>Premium quality tea, hand-selected and produced with care for export markets worldwide.</p>
+      <span class="factory-tag">KTDA Smallholder Network · Zone 10</span>
+      <p>Pioneering exceptional highland tea production on the western crest of the Mau Forest ecosystem at 2,100m – 2,400m elevation. Partnering with over 10,000 smallholder farmer-shareholders to deliver world-renowned brisk, bright amber orthodox and CTC teas to international auctions and retail connoisseurs.</p>
+      
+      <!-- Quality Certifications -->
+      <div class="footer-badges" aria-label="Factory Quality &amp; Sustainability Certifications">
+        <span class="footer-badge-pill" title="Rainforest Alliance Certified">
+          <img src="./assets/rainforest_logo.png" alt="Rainforest Alliance"> Rainforest Alliance
+        </span>
+        <span class="footer-badge-pill" title="Fairtrade Certified">
+          <img src="./assets/fairtrade_logo.png" alt="Fairtrade"> Fairtrade
+        </span>
+        <span class="footer-badge-pill" title="ISO 22000 Food Safety">
+          <img src="./assets/iso_logo.jpeg" alt="ISO 22000"> ISO 22000
+        </span>
+        <span class="footer-badge-pill" title="FDA Registered Facility">
+          <img src="./assets/fda_logo.png" alt="FDA"> FDA Registered
+        </span>
+      </div>
     </div>
 
+    <!-- COLUMN 1: FACTORY & PROCESSING -->
     <div class="footer-col">
-      <h4>Quick Links</h4>
-      <a class="footer-link" href="index.html">Shop</a>
-      <a class="footer-link" href="view.html">Cart</a>
-      <a class="footer-link" href="pay$submit.html">Pay</a>
-      <a class="footer-link" href="javascript:void(0)" onclick="if(window.openA11yToolbar) window.openA11yToolbar();">Accessibility Tools</a>
-      <a class="footer-link" href="javascript:void(0)" onclick="if(window.openA11yStatement) window.openA11yStatement();">Accessibility Statement</a>
-      <a class="footer-link" href="#" onclick="openCookieSettings(); return false;">Cookie Preferences</a>
+      <h4>Factory &amp; Process</h4>
+      <a class="footer-link" href="#about"><span class="link-arrow">▸</span> Heritage &amp; Mission</a>
+      <a class="footer-link" href="#process"><span class="link-arrow">▸</span> CTC Tea Processing</a>
+      <a class="footer-link" href="#sustainability"><span class="link-arrow">▸</span> Solar Energy Farm</a>
+      <a class="footer-link" href="#farmers"><span class="link-arrow">▸</span> Smallholder Farmers</a>
+      <a class="footer-link" href="javascript:void(0)" onclick="if(window.playVideo) window.playVideo(); document.getElementById('tegatVideo')?.scrollIntoView({behavior:'smooth'});"><span class="link-arrow">▸</span> Watch Factory Tour</a>
+      <a class="footer-link" href="#contract-desk"><span class="link-arrow">▸</span> Bulk Trade &amp; Export</a>
+      <a class="footer-link" href="index-1.html"><span class="link-arrow">▸</span> Online Tea Shop</a>
     </div>
 
+    <!-- COLUMN 2: TEA GRADES & DOWNLOADS -->
     <div class="footer-col">
-      <h4>Contact</h4>
-      <address>P.O. Box Olenguruone,<br>Nakuru County, Kenya</address>
-      <a class="footer-contact" href="tel:+254723121163">+254 723 121 163</a>
-      <a class="footer-contact" href="mailto:Info@olenguruone.ktdateas.com">Info@olenguruone.ktdateas.com</a>
+      <h4>Grades &amp; Products</h4>
+      <a class="footer-link" href="#products"><span class="link-arrow">▸</span> BP1 (Broken Pekoe 1)</a>
+      <a class="footer-link" href="#products"><span class="link-arrow">▸</span> PF1 (Pekoe Fannings 1)</a>
+      <a class="footer-link" href="#products"><span class="link-arrow">▸</span> PD (Pekoe Dust Grade)</a>
+      <a class="footer-link" href="#products"><span class="link-arrow">▸</span> D1 (Dust 1 Grade)</a>
+      <a class="footer-link" href="index-1.html"><span class="link-arrow">▸</span> 250g &amp; 500g Packets</a>
+      <a class="footer-link" href="index-1.html"><span class="link-arrow">▸</span> 50s Enveloped Tea Bags</a>
+      <a class="footer-link" href="./assets/specs_bp1.pdf" download><span class="link-arrow">▸</span> BP1 Specs (PDF)</a>
+      <a class="footer-link" href="./assets/specs_pf1.pdf" download><span class="link-arrow">▸</span> PF1 Specs (PDF)</a>
     </div>
 
+    <!-- COLUMN 3: GOVERNANCE & FARMER HUB -->
     <div class="footer-col">
-      <h4>Follow</h4>
-      <div class="social-icons" style="display:flex;gap:10px;margin-top:4px">
-        <a href="#" target="_blank" rel="noopener" aria-label="Follow us on Pinterest">
-          <svg width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
-          </svg>
-        </a>
-        <a href="#" target="_blank" rel="noopener" aria-label="Follow us on Instagram">
-          <svg width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="5"/>
-            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
-            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-          </svg>
-        </a>
-        <a href="#" target="_blank" rel="noopener" aria-label="Follow us on X (Twitter)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
-            <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
-          </svg>
-        </a>
+      <h4>Farmer &amp; Portal</h4>
+      <a class="footer-link" href="admin.html"><span class="link-arrow">▸</span> Management Portal</a>
+      <a class="footer-link" href="javascript:void(0)" onclick="if(window.openCustomerAuthModal) openCustomerAuthModal();"><span class="link-arrow">▸</span> Farmer &amp; Customer Sign In</a>
+      <a class="footer-link" href="#contact"><span class="link-arrow">▸</span> Buying Center Network</a>
+      <a class="footer-link" href="#contact"><span class="link-arrow">▸</span> Green Leaf Statements</a>
+      <a class="footer-link" href="#contact"><span class="link-arrow">▸</span> Annual General Meeting</a>
+      <a class="footer-link" href="#contact"><span class="link-arrow">▸</span> Whistleblower &amp; ESG Hotline</a>
+      <a class="footer-link" href="view.html"><span class="link-arrow">▸</span> View Cart &amp; Order Status</a>
+    </div>
+
+    <!-- COLUMN 4: DIRECT CONTACT & DISPATCH -->
+    <div class="footer-col">
+      <h4>Direct Contact</h4>
+      <div class="footer-contact-item">
+        <span class="ci">📍</span>
+        <address style="margin:0;">Olenguruone Division, Kuresoi South, Nakuru County<br>P.O. Box 24 - 20152, Olenguruone, Kenya</address>
+      </div>
+      <div class="footer-contact-item">
+        <span class="ci">📞</span>
+        <div>
+          <a class="footer-contact" href="tel:+254723121163">+254 723 121 163</a> (Main Desk)<br>
+          <a class="footer-contact" href="tel:+254722203451">+254 722 203 451</a> (Farmer Desk)
+        </div>
+      </div>
+      <div class="footer-contact-item">
+        <span class="ci">✉️</span>
+        <div>
+          <a class="footer-contact" href="mailto:Info@olenguruone.ktdateas.com">Info@olenguruone.ktdateas.com</a><br>
+          <a class="footer-contact" href="mailto:trade@olenguruonetea.co.ke">trade@olenguruonetea.co.ke</a>
+        </div>
+      </div>
+      <div class="footer-contact-item">
+        <span class="ci">⏰</span>
+        <p style="margin:0;">Mon – Fri: 08:00 – 17:00 EAT<br>Sat: 08:00 – 13:00 EAT</p>
+      </div>
+
+      <!-- Social and Messaging Links -->
+      <div style="margin-top:14px;">
+        <span style="display:block;font-size:11px;text-transform:uppercase;color:var(--lux-gold);font-weight:700;margin-bottom:8px;letter-spacing:0.5px;">Connect &amp; Social</span>
+        <div class="social-icons" style="display:flex;gap:8px;flex-wrap:wrap;">
+          <!-- WhatsApp Direct -->
+          <a href="https://wa.me/254723121163?text=Hello%20Olenguruone%20Tea%20Factory%2C%20I%20would%20like%20to%20inquire%20about%20tea%20orders%20and%20grades." target="_blank" rel="noopener" aria-label="Chat with Olenguruone Tea Factory on WhatsApp" title="WhatsApp Direct Chat">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+          </a>
+          <!-- YouTube Factory Tour -->
+          <a href="https://youtu.be/WFJ2fSdbf2E" target="_blank" rel="noopener" aria-label="Watch Olenguruone Tea Factory Film on YouTube" title="YouTube Video Tour">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+              <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+            </svg>
+          </a>
+          <!-- Facebook -->
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Follow us on Facebook" title="Facebook Page">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+            </svg>
+          </a>
+          <!-- X / Twitter -->
+          <a href="https://x.com/" target="_blank" rel="noopener" aria-label="Follow us on X" title="X (Twitter)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4l11.733 16h4.267l-11.733 -16z" />
+              <path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
+            </svg>
+          </a>
+          <!-- Google Maps -->
+          <a href="https://www.google.com/maps?q=Olenguruone%20Tea%20Factory" target="_blank" rel="noopener" aria-label="View Olenguruone Tea Factory on Google Maps" title="Google Maps Location">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+              <line x1="8" y1="2" x2="8" y2="18"></line>
+              <line x1="16" y1="6" x2="16" y2="22"></line>
+            </svg>
+          </a>
+        </div>
       </div>
     </div>
 
     <!-- NEWSLETTER EMAIL SUBSCRIPTION BOX -->
-    <div class="footer-newsletter-box" style="grid-column: 1 / -1; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(247, 220, 111, 0.25); border-radius: 16px; padding: 24px 28px; margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+    <div class="footer-newsletter-box" style="grid-column: 1 / -1; background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(201, 156, 34, 0.08) 100%); border: 1px solid rgba(247, 220, 111, 0.28); border-radius: 16px; padding: 24px 28px; margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);">
       <div style="flex: 1; min-width: 280px;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          <h4 style="color: var(--yellow); font-family: 'Playfair Display', serif; font-size: 20px; margin: 0;">Subscribe to Olenguruone Tea Email Bulletin</h4>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <h4 style="color: var(--yellow); font-family: 'Playfair Display', serif; font-size: 20px; margin: 0;">Subscribe to Highland Harvest &amp; Cupping Bulletins</h4>
         </div>
-        <p style="color: rgba(247, 220, 111, 0.75); font-size: 13.5px; margin: 0; line-height: 1.5;">Join our subscriber list for monthly factory cupping notes, auction price reports, and exclusive export offers.</p>
+        <p style="color: rgba(247, 220, 111, 0.8); font-size: 13.5px; margin: 0; line-height: 1.5;">Join tea blenders, brokers, and shareholders for monthly Mombasa auction reports, seasonal tasting notes, and export allocations.</p>
       </div>
       <form id="footerSubscribeForm" onsubmit="handleFooterSubscribe(event)" style="display: flex; gap: 10px; width: 100%; max-width: 480px; flex-shrink: 0;">
-        <input type="email" id="footerSubEmail" placeholder="Enter your email address..." required style="flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(247, 220, 111, 0.35); background: rgba(0,0,0,0.35); color: #fff; font-size: 14px; outline: none; font-family: inherit;">
-        <button type="submit" style="background: var(--yellow); color: var(--lux-green); border: none; padding: 12px 22px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; white-space: nowrap; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(247, 220, 111, 0.2);">Subscribe Free</button>
+        <input type="email" id="footerSubEmail" placeholder="Enter corporate or personal email..." required style="flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(247, 220, 111, 0.35); background: rgba(0,0,0,0.4); color: #fff; font-size: 14px; outline: none; font-family: inherit;">
+        <button type="submit" style="background: var(--yellow); color: var(--lux-green); border: none; padding: 12px 24px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; white-space: nowrap; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(247, 220, 111, 0.25);">Subscribe Free</button>
       </form>
-      <div id="footerSubSuccess" style="display:none; color: var(--yellow); font-size: 14px; font-weight: 700; width: 100%; text-align: center; background: rgba(247, 220, 111, 0.1); padding: 10px; border-radius: 8px; border: 1px solid var(--yellow);">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg>Thank you for subscribing to Olenguruone Tea! Check your inbox for updates.
+      <div id="footerSubSuccess" style="display:none; color: var(--yellow); font-size: 14px; font-weight: 700; width: 100%; text-align: center; background: rgba(247, 220, 111, 0.12); padding: 12px; border-radius: 8px; border: 1px solid var(--yellow);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><polyline points="20 6 9 17 4 12"/></svg>Thank you for subscribing to Olenguruone Tea! Check your inbox for upcoming bulletins.
       </div>
     </div>
   </div>
 
+  <!-- FOOTER BOTTOM LEGAL & CREDITS -->
   <div class="footer-bottom">
-    <span>© 2026 Olenguruone Tea Factory. All Rights Reserved.</span>
+    <div>
+      <span>© 2026 Olenguruone Tea Factory Co. Ltd. Managed by Kenya Tea Development Agency (KTDA MS). All Rights Reserved.</span>
+      <div style="font-size:11.5px; color:rgba(247,220,111,0.5); margin-top:3px;">East African Tea Trade Association (EATTA) Licensed Producer #042 · Mau Forest Conservation Partner</div>
+    </div>
     <div class="footer-legal">
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
+      <a href="javascript:void(0)" onclick="openPrivacyModal()">Privacy Policy</a>
+      <a href="javascript:void(0)" onclick="openTermsModal()">Terms of Service &amp; Trade</a>
+      <a href="javascript:void(0)" onclick="openCookieSettings(); return false;">Cookie Preferences</a>
+      <a href="javascript:void(0)" onclick="if(window.openA11yToolbar) window.openA11yToolbar();">Accessibility Tools</a>
+      <a href="javascript:void(0)" onclick="if(window.openA11yStatement) window.openA11yStatement();">Accessibility Statement</a>
+      <button type="button" class="back-to-top-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})" aria-label="Scroll back to top of page">
+        Back to Top ↑
+      </button>
     </div>
   </div>
 </footer>
+
+<!-- PRIVACY POLICY MODAL -->
+<div id="privacyModal" class="modal" style="z-index: 3000; display: none;" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle">
+  <div class="modal-card" style="max-width: 760px; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; background: #ffffff; border-radius: 16px; border: 2px solid var(--lux-green); box-shadow: 0 25px 60px rgba(0,0,0,0.5);">
+    <div style="background: var(--lux-green); color: #ffffff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--lux-gold);">
+      <div>
+        <h3 id="privacyModalTitle" style="margin: 0; font-family: 'Playfair Display', serif; font-size: 21px; color: var(--yellow);">Privacy &amp; Data Protection Policy</h3>
+        <p style="margin: 4px 0 0; font-size: 12.5px; color: rgba(255,255,255,0.8);">Olenguruone Tea Factory Co. Ltd · Kenya Data Protection Act 2019 Compliance</p>
+      </div>
+      <button type="button" onclick="closePrivacyModal()" style="background: rgba(255,255,255,0.15); border: none; color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;" aria-label="Close dialog">✕</button>
+    </div>
+    <div style="padding: 24px 28px; overflow-y: auto; font-size: 14px; line-height: 1.65; color: #334155;">
+      <h4 style="color: var(--lux-green); margin-top: 0;">1. Commitment to Privacy</h4>
+      <p>Olenguruone Tea Factory Co. Ltd respects the privacy of our shareholders, commercial tea buyers, smallholder farmers, and website visitors. This policy outlines how we collect, store, and process personal and commercial data in full compliance with the Kenya Data Protection Act, 2019, and international data protection standards.</p>
+
+      <h4 style="color: var(--lux-green);">2. Data We Collect</h4>
+      <ul style="padding-left: 20px; margin: 8px 0;">
+        <li><strong>Commercial &amp; Trade Inquiries:</strong> Organization name, tax identification, representative contact details, shipping destination, and grade specifications submitted via the Contract Desk.</li>
+        <li><strong>Farmer &amp; Shareholder Portal:</strong> Grower number, national ID, assigned collection center, and green leaf delivery weighment records.</li>
+        <li><strong>Consumer Online Orders:</strong> Name, delivery address, phone contact, and payment transaction references for order fulfillment.</li>
+        <li><strong>Email Bulletins:</strong> Email addresses provided with consent for auction reports and cupping updates.</li>
+      </ul>
+
+      <h4 style="color: var(--lux-green);">3. Security &amp; Data Storage</h4>
+      <p>All data is transmitted via TLS 1.3 encryption and stored in secure, access-controlled databases. Financial transactions through M-PESA and bank transfers are processed through verified, compliant payment gateways without storing sensitive credentials on our servers.</p>
+
+      <h4 style="color: var(--lux-green);">4. Your Rights</h4>
+      <p>Under the Kenya Data Protection Act, you have the right to request access to your stored records, rectify inaccurate data, or request deletion where statutory retention requirements permit. For inquiries, contact our Data Protection Officer at <a href="mailto:privacy@olenguruonetea.co.ke" style="color: var(--lux-green); font-weight: 700;">privacy@olenguruonetea.co.ke</a>.</p>
+    </div>
+    <div style="background: #f8fafc; padding: 14px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end;">
+      <button type="button" onclick="closePrivacyModal()" style="background: var(--lux-green); color: var(--yellow); border: none; padding: 10px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">Close &amp; Acknowledge</button>
+    </div>
+  </div>
+</div>
+
+<!-- TERMS OF SERVICE & TRADE MODAL -->
+<div id="termsModal" class="modal" style="z-index: 3000; display: none;" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle">
+  <div class="modal-card" style="max-width: 760px; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; background: #ffffff; border-radius: 16px; border: 2px solid var(--lux-green); box-shadow: 0 25px 60px rgba(0,0,0,0.5);">
+    <div style="background: var(--lux-green); color: #ffffff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--lux-gold);">
+      <div>
+        <h3 id="termsModalTitle" style="margin: 0; font-family: 'Playfair Display', serif; font-size: 21px; color: var(--yellow);">Terms of Service &amp; Export Trade</h3>
+        <p style="margin: 4px 0 0; font-size: 12.5px; color: rgba(255,255,255,0.8);">East African Tea Trade Association (EATTA) Regulations · Single Estate Origin</p>
+      </div>
+      <button type="button" onclick="closeTermsModal()" style="background: rgba(255,255,255,0.15); border: none; color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;" aria-label="Close dialog">✕</button>
+    </div>
+    <div style="padding: 24px 28px; overflow-y: auto; font-size: 14px; line-height: 1.65; color: #334155;">
+      <h4 style="color: var(--lux-green); margin-top: 0;">1. Governing Regulations</h4>
+      <p>All commercial bulk sales, forward contracts, and private treaty transactions executed by Olenguruone Tea Factory Co. Ltd are governed by the rules of the East African Tea Trade Association (EATTA) and the Laws of the Republic of Kenya.</p>
+
+      <h4 style="color: var(--lux-green);">2. Quality Guarantee &amp; Sampling</h4>
+      <p>Every lot dispatched matches the approved pre-shipment sample in liquoring characteristics, color, briskness, and leaf appearance. Maximum moisture content is guaranteed at ≤ 3.5%. Pre-shipment certificates of analysis and phytosanitary certificates issued by KEPHIS and SGS are provided with all export documentation.</p>
+
+      <h4 style="color: var(--lux-green);">3. Export Delivery &amp; Incoterms</h4>
+      <p>Standard export sales are executed on FOB Mombasa Port basis (Incoterms 2020) unless CIF terms are expressly agreed in writing. Tea is palletized and stuffed in multi-ply kraft paper sacks with aluminum foil barrier lining to ensure freshness during ocean transit.</p>
+
+      <h4 style="color: var(--lux-green);">4. Payment Terms</h4>
+      <p>Trade orders require an Irrevocable Letter of Credit (L/C) confirmed by a recognized international prime bank payable at sight against shipping documents, or telegraphic transfer (TT) prior to bill of lading release.</p>
+
+      <h4 style="color: var(--lux-green);">5. Arbitration</h4>
+      <p>Any dispute arising under an export sales contract that cannot be settled amicably shall be submitted to arbitration under the Rules of the East African Tea Trade Association (EATTA), Mombasa, Kenya.</p>
+    </div>
+    <div style="background: #f8fafc; padding: 14px 24px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end;">
+      <button type="button" onclick="closeTermsModal()" style="background: var(--lux-green); color: var(--yellow); border: none; padding: 10px 22px; border-radius: 8px; font-weight: 700; font-size: 13px; cursor: pointer;">Close &amp; Acknowledge</button>
+    </div>
+  </div>
+</div>
  
 
   <!-- Scripts -->
@@ -6113,6 +6282,52 @@ function handleFooterSubscribe(e) {
     if (successEl) successEl.style.display = 'none';
   }, 5000);
 }
+
+window.openPrivacyModal = function() {
+  const m = document.getElementById('privacyModal');
+  if (m) {
+    m.style.display = 'flex';
+    m.classList.add('show');
+  }
+};
+
+window.closePrivacyModal = function() {
+  const m = document.getElementById('privacyModal');
+  if (m) {
+    m.style.display = 'none';
+    m.classList.remove('show');
+  }
+};
+
+window.openTermsModal = function() {
+  const m = document.getElementById('termsModal');
+  if (m) {
+    m.style.display = 'flex';
+    m.classList.add('show');
+  }
+};
+
+window.closeTermsModal = function() {
+  const m = document.getElementById('termsModal');
+  if (m) {
+    m.style.display = 'none';
+    m.classList.remove('show');
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['privacyModal', 'termsModal'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('click', (e) => {
+        if (e.target === el) {
+          el.style.display = 'none';
+          el.classList.remove('show');
+        }
+      });
+    }
+  });
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   updateCustomerNavUI();
